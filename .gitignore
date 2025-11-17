@@ -1,0 +1,46 @@
+### 환경 변수 & 비밀키 ###
+**/.env
+**/.env.*
+*.pem
+*.key
+*.crt
+*.p12
+
+### React / Vite / TypeScript ###
+**/node_modules/
+**/dist/
+**/.vite/
+*.log
+*.tsbuildinfo
+
+### Spring Boot ###
+**/build/
+**/out/
+**/.gradle/
+**/target/
+*.jar
+*.war
+*.class
+
+### IDE ###
+.idea/
+*.iml
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+learned-acronym-477801-k0-09d5fda514df.json
+
+###openapi-generator###
+gardening_front/src/shared/api/.openapi-generator/
+gardening_front/src/shared/api/docs/
+gardening_front/src/shared/api/.gitignore
+gardening_front/src/shared/api/.npmignore
+gardening_front/src/shared/api/.openapi-generator-ignore
+gardening_front/src/shared/api/api.ts
+gardening_front/src/shared/api/common.ts
+gardening_front/src/shared/api/configuration.ts
+gardening_front/src/shared/api/git_push.sh
+gardening_front/src/shared/api/index.ts
+openapitools.json
