@@ -66,7 +66,7 @@ export function Header() {
                 <div className="flex items-center gap-5">
                     <a onClick={() => navigate("/")} className="hover:bg-accent rounded-md p-2">
                         {/* 로고 자리 */}
-                        <Logo class="w-20 h-8"/>
+                        <Logo className="w-20 h-8"/>
                     </a>
                     <NavigationMenu className="hidden md:flex">
                         <NavigationMenuList>

@@ -6,7 +6,7 @@ const SchedulePage = lazy(() => import("@/pages/schedule/SchedulePage"));
 export default function ScheduleRoutes(){
     return (
         <Routes>
-            <Route path="/" element={<SchedulePage/>}/>
+            <Route path="*" element={<SchedulePage/>}/>
         </Routes>
     );
 }
