@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from '@/shared/shadcn/components/ui/button.tsx';
 import {cn} from '@/shared/shadcn/lib/utils.ts';
 import {MenuToggleIcon} from '@/shared/shadcn/components/ui/menu-toggle-icon.tsx';
@@ -23,12 +23,16 @@ import {
 } from "@/entities/header/index.js";
 import {ListItem} from "@/features/header/index.js";
 import {useNavigate} from "react-router-dom";
+import{ useAuthStore, type AuthState} from "@/entities/auth/useAuthStore.tsx";
+import {getUserInfo} from "@/entities/auth/api.ts";
+
 
 export function Header() {
     const [open, setOpen] = React.useState(false);
     const scrolled = useScroll(10);
     const navigate = useNavigate();
-
+    const accessToken = useAuthStore((s: AuthState) => s.accessToken);
+    const [userInfo, setUserInfo] = useState<{ nickname?: string; profileUrl?: string }>({});
     React.useEffect(() => {
         if (open) {
             document.body.style.overflow = 'hidden';
@@ -39,7 +43,18 @@ export function Header() {
             document.body.style.overflow = '';
         };
     }, [open]);
+    useEffect(() => {
+        if (!accessToken) return;
 
+        (async () => {
+            try {
+                const data = await getUserInfo();
+                setUserInfo(data);
+            } catch (e) {
+                console.error('정보 불러오기 실패', e);
+            }
+        })();
+    }, [accessToken]);
     return (
         <header
             className={cn('sticky top-0 z-50 w-full border-b border-transparent', {
@@ -107,8 +122,31 @@ export function Header() {
                     </NavigationMenu>
                 </div>
                 <div className="hidden items-center gap-2 md:flex">
-                    <Button variant="outline" onClick={() => navigate(registerLink)}>회원가입</Button>
-                    <Button onClick={() => navigate(loginLink)}>로그인</Button>
+                    {accessToken ? (
+                        <>
+                            <div className="flex items-center gap-2 cursor-pointer"
+                                 onClick={() => navigate('/auth/dashboard')}>
+                                <img
+                                    src={userInfo?.profileUrl}
+                                    alt="profile"
+                                    className="w-8 h-8 rounded-full border"
+                                />
+                                <span className="text-sm font-medium">{userInfo?.nickname}</span>
+                            </div>
+
+                            <Button variant="outline" onClick={() => navigate('/auth/dashboard')}>
+                                대시보드
+                            </Button>
+                            <Button variant="outline" onClick={() => navigate('/oauth/edit-complete-profile')}>
+                               내정보 수정
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <Button variant="outline" onClick={() => navigate(registerLink)}>회원가입</Button>
+                            <Button onClick={() => navigate(loginLink)}>로그인</Button>
+                        </>
+                    )}
                 </div>
                 <Button
                     size="icon"

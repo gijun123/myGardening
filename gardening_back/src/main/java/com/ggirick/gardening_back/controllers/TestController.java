@@ -1,6 +1,6 @@
 package com.ggirick.gardening_back.controllers;
 
-import com.ggirick.gardening_back.dto.UserTokenDTO;
+import com.ggirick.gardening_back.dto.auth.UserTokenDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +25,6 @@ public class TestController {
     })
     @GetMapping
     public UserTokenDTO test() {
-        return UserTokenDTO.builder().id("test").authority("ADMIN").build();
+        return UserTokenDTO.builder().uid("6c9fb0c9-e970-4dd7-9011-aec84f2eb1f7").build();
     }
 }

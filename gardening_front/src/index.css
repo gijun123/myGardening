@@ -47,41 +47,63 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 }
-
 :root {
     --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
+
+    /* 배경 / 텍스트 */
+    --background: oklch(0.985 0.01 140); /* 약한 따뜻함 있는 밝은 연녹 */
+    --foreground: oklch(0.22 0.03 140);  /* 짙은 자연 그린 텍스트 */
+
+    /* 카드 */
     --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
+    --card-foreground: oklch(0.22 0.03 140);
+
+    /* 팝오버 */
     --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --popover-foreground: oklch(0.22 0.03 140);
+
+    /* 포인트 컬러 */
+    --primary: oklch(0.45 0.07 150); /* 깊은 자연 초록 */
+    --primary-foreground: oklch(0.98 0.01 140);
+
+    --secondary: oklch(0.95 0.02 140); /* 연한 연초록 */
+    --secondary-foreground: oklch(0.32 0.04 150);
+
+    /* muted */
+    --muted: oklch(0.96 0.015 140);
+    --muted-foreground: oklch(0.55 0.03 150);
+
+    /* accent */
+    --accent: oklch(0.82 0.06 150); /* 화사한 밝은 초록 */
+    --accent-foreground: oklch(0.25 0.04 145);
+
+    /* destructive */
+    --destructive: oklch(0.62 0.23 27); /* 기존보다 더 자연스러운 레드 */
+    --destructive-foreground: oklch(0.98 0 0);
+
+    /* border/input/ring */
+    --border: oklch(0.9 0.01 140);
+    --input: oklch(0.92 0.01 140);
+    --ring: oklch(0.55 0.04 150);
+
+    /* 차트 컬러 (가든 테마 기반) */
+    --chart-1: oklch(0.5 0.07 150);  /* 다크 그린 */
+    --chart-2: oklch(0.75 0.06 150); /* 밝은 그린 */
+    --chart-3: oklch(0.82 0.04 150); /* 연한 민트 */
+    --chart-4: oklch(0.9 0.03 145);  /* 파스텔 느낌 */
+    --chart-5: oklch(0.35 0.05 145); /* 진한 그린 */
+
+    /* 사이드바 */
+    --sidebar: oklch(0.97 0.01 140);
+    --sidebar-foreground: oklch(0.22 0.03 140);
+    --sidebar-primary: oklch(0.45 0.07 150);
+    --sidebar-primary-foreground: oklch(0.98 0.01 140);
+    --sidebar-accent: oklch(0.95 0.02 140);
+    --sidebar-accent-foreground: oklch(0.32 0.04 150);
+    --sidebar-border: oklch(0.9 0.01 140);
+    --sidebar-ring: oklch(0.55 0.04 150);
 }
+
 
 .dark {
     --background: oklch(0.145 0 0);

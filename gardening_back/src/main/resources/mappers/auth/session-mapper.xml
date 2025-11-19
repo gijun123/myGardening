@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ggirick.gardening_back.mappers.auth.UserSessionMapper">
+    <resultMap id="userSessionMap" type="com.ggirick.gardening_back.dto.auth.UserSessionDTO">
+        <id property="sessionId" column="SESSION_ID"/>
+        <result property="userUid" column="USER_UID"/>
+        <result property="refreshToken" column="REFRESH_TOKEN"/>
+        <result property="expiresAt" column="EXPIRES_AT"/>
+    </resultMap>
+
+    <insert id="insertSession">
+        INSERT INTO USER_SESSION (SESSION_ID, USER_UID, PROVIDER, REFRESH_TOKEN, EXPIRES_AT, IP_ADDRESS, IS_REVOKED, CREATED_AT)
+        VALUES (#{sessionId}, #{userUid}, #{provider}, #{refreshToken}, #{expiresAt}, #{ipAddress}, 'N', SYSTIMESTAMP)
+    </insert>
+
+    <select id="selectValidSessionByUidAndToken" resultMap="userSessionMap">
+        SELECT *
+        FROM USER_SESSION
+        WHERE USER_UID = #{userUid}
+        AND REFRESH_TOKEN = #{refreshToken}
+        AND IS_REVOKED = 'N'
+        AND EXPIRES_AT &gt; SYSTIMESTAMP
+    </select>
+
+    <update id="updateRevokedStatus">
+        UPDATE USER_SESSION
+        SET IS_REVOKED = 'Y', UPDATED_AT = SYSTIMESTAMP
+        WHERE SESSION_ID = #{sessionId}
+    </update>
+
+    <update id="revokeAllUserSessions">
+        UPDATE USER_SESSION
+        SET IS_REVOKED = 'Y', UPDATED_AT = SYSTIMESTAMP
+        WHERE USER_UID = #{uid}
+        AND IS_REVOKED = 'N'
+    </update>
+
+
+
+</mapper>
