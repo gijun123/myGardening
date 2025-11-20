@@ -12,6 +12,7 @@
 **/.vite/
 *.log
 *.tsbuildinfo
+package-lock.json
 
 ### Spring Boot ###
 **/build/
