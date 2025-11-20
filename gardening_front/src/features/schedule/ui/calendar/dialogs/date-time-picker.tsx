@@ -1,13 +1,13 @@
 import {format} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import type {ControllerRenderProps, UseFormReturn} from "react-hook-form";
-import {Button} from "@/shared/shadcn/components/ui/button";
-import {Calendar} from "@/shared/shadcn/components/ui/calendar";
-import {FormControl, FormItem, FormLabel, FormMessage,} from "@/shared/shadcn/components/ui/form";
-import {Popover, PopoverContent, PopoverTrigger,} from "@/shared/shadcn/components/ui/popover";
-import {ScrollArea, ScrollBar} from "@/shared/shadcn/components/ui/scroll-area";
-import {cn} from "@/shared/shadcn/lib/utils";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context";
+import {Button} from "@/shared/shadcn/components/ui/button.tsx";
+import {Calendar} from "@/shared/shadcn/components/ui/calendar.tsx";
+import {FormControl, FormItem, FormLabel, FormMessage,} from "@/shared/shadcn/components/ui/form.tsx";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/shared/shadcn/components/ui/popover.tsx";
+import {ScrollArea, ScrollBar} from "@/shared/shadcn/components/ui/scroll-area.tsx";
+import {cn} from "@/shared/shadcn/lib/utils.ts";
+import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
 import type {TEventFormData} from "@/entities/schedule/calendar/schemas.ts";
 import {ko} from "date-fns/locale/ko";
 
@@ -97,7 +97,7 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                                         className="sm:aspect-square"
                                         onClick={() => handleTimeChange("ampm", period)}
                                     >
-                                        {period}
+                                        {period === "AM" ? "오전" : "오후"}
                                     </Button>
                                 ))}
                             </div>
