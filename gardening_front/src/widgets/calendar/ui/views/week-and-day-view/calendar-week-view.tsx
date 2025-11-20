@@ -13,6 +13,7 @@ import {
     WeekViewMultiDayEventsRow
 } from "@/widgets/calendar/ui/views/week-and-day-view/week-view-multi-day-events-row.tsx";
 import {ko} from "date-fns/locale/ko";
+import {cn} from "@/shared/shadcn/lib/utils.ts";
 
 interface IProps {
     singleDayEvents: IEvent[];
@@ -41,7 +42,7 @@ export function CalendarWeekView({singleDayEvents, multiDayEvents}: IProps) {
                 transition={transition}
             >
                 <p>주간 보기는 작은 화면에서는 권장되지 않습니다.</p>
-                <p>데스크톱에서 이용해주세요.</p>
+                <p>데스크톱에서 이용하시거나 일간 보기를 사용해주세요.</p>
             </motion.div>
 
             <motion.div
@@ -73,18 +74,25 @@ export function CalendarWeekView({singleDayEvents, multiDayEvents}: IProps) {
                                     transition={{delay: index * 0.05, ...transition}}
                                 >
                                     {/* Mobile: Show only day abbreviation and number */}
-                                    <span className="block sm:hidden">
-									{format(day, "EEE").charAt(0)}
-                                        <span className="block font-semibold text-t-secondary text-xs">
-										{format(day, "d")}
+                                    <span className={cn(
+                                        "block sm:hidden",
+                                        day.getDay() === 0 && "text-red-500",
+                                        day.getDay() === 6 && "text-blue-600"
+                                    )}>
+									{format(day, "EEE", {locale: ko}).charAt(0)}
+                                        <span className="block text-xs">
+										{format(day, "d", {locale: ko})}
 									</span>
 								</span>
                                     {/* Desktop: Show full format */}
-                                    <span className="hidden sm:inline">
-									{format(day, "EE")}{" "}
-                                        <span className="ml-1 font-semibold text-t-secondary">
-										{format(day, "d")}
-									</span>
+                                    <span
+                                        className={cn(
+                                            "hidden sm:inline",
+                                            day.getDay() === 0 && "text-red-500",   // 일요일
+                                            day.getDay() === 6 && "text-blue-600"   // 토요일
+                                        )}
+                                    >
+									{format(day, "d일 EE요일", {locale: ko})}
 								</span>
                                 </motion.span>
                             ))}
@@ -112,7 +120,7 @@ export function CalendarWeekView({singleDayEvents, multiDayEvents}: IProps) {
 												{format(
                                                     new Date().setHours(hour, 0, 0, 0),
                                                     use24HourFormat ? "HH:00" : "a h시",
-                                                    {locale:ko}
+                                                    {locale: ko}
                                                 )}
 											</span>
                                         )}

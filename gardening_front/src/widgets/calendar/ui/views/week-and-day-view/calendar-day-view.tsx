@@ -1,7 +1,6 @@
 import {format, isWithinInterval, parseISO} from "date-fns";
-import {Calendar, Clock} from "lucide-react";
+import {Clock} from "lucide-react";
 import {useEffect, useRef} from "react";
-import {DayPicker} from "@/shared/shadcn/components/ui/day-picker.tsx";
 import {ScrollArea} from "@/shared/shadcn/components/ui/scroll-area.tsx";
 import {useCalendar} from "@/widgets/calendar/ui/contexts/calendar-context.tsx";
 
@@ -15,6 +14,7 @@ import {
 } from "@/widgets/calendar/ui/views/week-and-day-view/day-view-multi-day-events-row.tsx";
 import {RenderGroupedEvents} from "@/widgets/calendar/ui/views/week-and-day-view/render-grouped-events.tsx";
 import {ko} from "date-fns/locale/ko";
+import {Calendar} from "@/shared/shadcn/components/ui/calendar.tsx";
 
 interface IProps {
     singleDayEvents: IEvent[];
@@ -22,7 +22,7 @@ interface IProps {
 }
 
 export function CalendarDayView({singleDayEvents, multiDayEvents}: IProps) {
-    const {selectedDate, setSelectedDate, users, use24HourFormat} =
+    const {selectedDate, setSelectedDate, use24HourFormat} =
         useCalendar();
     const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -94,10 +94,7 @@ export function CalendarDayView({singleDayEvents, multiDayEvents}: IProps) {
                     <div className="relative z-20 flex border-b">
                         <div className="w-18"></div>
                         <span className="flex-1 border-l py-2 text-center text-xs font-medium text-t-quaternary">
-							<span className="font-semibold text-t-secondary">
-								{format(selectedDate, "d")}
-							</span>
-                            {format(selectedDate, " EE요일", {locale: ko})}
+                            {format(selectedDate, "d일 EE요일", {locale: ko})}
 						</span>
                     </div>
                 </div>
@@ -187,6 +184,12 @@ export function CalendarDayView({singleDayEvents, multiDayEvents}: IProps) {
             <div className="hidden w-72 divide-y border-l md:block">
 
                 <div className="flex-1 space-y-3">
+                    <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        className="rounded-md border shadow-sm mx-auto my-4"
+                    />
                     {currentEvents.length > 0 ? (
                         <div className="flex items-start gap-2 px-4 pt-4">
 							<span className="relative mt-[5px] flex size-2.5">
@@ -216,7 +219,6 @@ export function CalendarDayView({singleDayEvents, multiDayEvents}: IProps) {
                                             </p>
 
                                             <div className="flex items-center gap-1.5">
-                                                <Calendar className="size-4 text-t-quinary"/>
                                                 <span className="text-sm text-t-tertiary">
 													{format(new Date(event.startDate), "yyyy/MM/d", {locale: ko})}
 												</span>
