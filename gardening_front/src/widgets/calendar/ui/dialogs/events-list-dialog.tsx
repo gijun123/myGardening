@@ -37,8 +37,7 @@ export function EventListDialog({
         <span className="cursor-pointer">
 			<span className="sm:hidden">+{hiddenEventsCount}</span>
 			<span className="hidden sm:inline py-0.5 px-2 my-1 rounded-xl border">
-				{hiddenEventsCount}
-                <span className="mx-1">more...</span>
+				{hiddenEventsCount}개 더보기...
 			</span>
 		</span>
     );

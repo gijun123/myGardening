@@ -108,14 +108,8 @@ export function AddEditEventDialog({
 				...values,
 				startDate: format(values.startDate, "yyyy-MM-dd'T'HH:mm:ss"),
 				endDate: format(values.endDate, "yyyy-MM-dd'T'HH:mm:ss"),
+                // eslint-disable-next-line react-hooks/purity
 				id: isEditing ? event.id : Math.floor(Math.random() * 1000000),
-				user: isEditing
-					? event.user
-					: {
-							id: Math.floor(Math.random() * 1000000).toString(),
-							name: "Jeraidi Yassir",
-							picturePath: null,
-						},
 				color: values.color,
 			};
 

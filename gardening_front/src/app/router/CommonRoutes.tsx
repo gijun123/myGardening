@@ -12,17 +12,15 @@ const ScheduleRoutes = lazy(() => import("./ScheduleRoutes"));
 
 export function CommonRoutes() {
     return (
-        <main className="mx-auto h-full w-full max-w-3xl px-4 py-12">
-            <Routes>
-                <Route path="/schedule" element={<ScheduleRoutes/>}/>
-                <Route path="*" element={<HomePage/>}/>
-                <Route path="/auth/dashboard" element={<DashboardPage/>} />
-                <Route path="/auth/login" element={<LoginPage/>}/>
-                <Route path="/auth/register" element={<RegisterPage/>}/>
-                <Route path="/oauth/redirect" element={<OAuthRedirectHandler />} />
-                <Route path="/oauth/initial-complete-profile" element={<InitialCompleteProfilePage />} />
-                <Route path="/oauth/edit-complete-profile" element={<EditCompleteProfilePage />} />
-            </Routes>
-        </main>
+        <Routes>
+            <Route path="/schedule" element={<ScheduleRoutes/>}/>
+            <Route path="*" element={<HomePage/>}/>
+            <Route path="/auth/dashboard" element={<DashboardPage/>}/>
+            <Route path="/auth/login" element={<LoginPage/>}/>
+            <Route path="/auth/register" element={<RegisterPage/>}/>
+            <Route path="/oauth/redirect" element={<OAuthRedirectHandler/>}/>
+            <Route path="/oauth/initial-complete-profile" element={<InitialCompleteProfilePage/>}/>
+            <Route path="/oauth/edit-complete-profile" element={<EditCompleteProfilePage/>}/>
+        </Routes>
     );
 }

@@ -16,6 +16,7 @@ import type {IEvent} from "@/widgets/calendar/ui/interfaces.ts";
 import {formatTime, getColorClass} from "@/widgets/calendar/ui/helpers.ts";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
 import {useCalendar} from "@/widgets/calendar/ui/contexts/calendar-context.tsx";
+import {ko} from "date-fns/locale/ko";
 
 interface EventDropConfirmationDialogProps {
     open: boolean;
@@ -46,7 +47,7 @@ export function EventDropConfirmationDialog({
     const originalStart = new Date(event.startDate);
 
     const formatDate = (date: Date) => {
-        return format(date, "MMM dd, yyyy 'at '") + formatTime(date, use24HourFormat);
+        return format(date, "yyyy년 MMM dd일, ", {locale:ko}) + formatTime(date, use24HourFormat);
     };
 
     const handleConfirm = () => {
@@ -63,22 +64,18 @@ export function EventDropConfirmationDialog({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Event Move</AlertDialogTitle>
+                    <AlertDialogTitle>이 일정을 이동하시겠습니까?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Are you sure you want to move
-                        <span className={cn(getColorClass(event.color), "mx-1 py-0.5 px-1 rounded-md")}>
+                        <span className={cn(getColorClass(event.color), "mx-1 py-0.5 px-1 rounded-md font-semibold")}>
 							{event.title}
-						</span>
-                        event from
-                        <strong className="mx-1">{formatDate(originalStart)}</strong> to
-                        <strong className="mx-1">{formatDate(newStartDate)}</strong>?
+                        </span>일정을 <br/>
+                        <strong className="mx-1">{formatDate(originalStart)}</strong>에서<br/>
+                        <strong className="mx-1">{formatDate(newStartDate)}</strong>로 이동하시겠습니까?
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel onClick={handleCancel}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleConfirm}>
-                        Move Event
-                    </AlertDialogAction>
+                    <AlertDialogCancel onClick={handleCancel}>취소</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleConfirm}>확인</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

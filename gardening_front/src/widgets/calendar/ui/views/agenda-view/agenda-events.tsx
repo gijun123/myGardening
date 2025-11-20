@@ -21,6 +21,7 @@ import {
 } from "@/widgets/calendar/ui/helpers.ts";
 import {EventBullet} from "@/widgets/calendar/ui/views/month-view/event-bullet.tsx";
 import {COLORS_KO} from "@/widgets/calendar/ui/constants.ts";
+import {ko} from "date-fns/locale/ko";
 
 export const AgendaEvents: FC = () => {
     const {events, use24HourFormat, badgeVariant, agendaModeGroupBy, selectedDate} =
@@ -49,7 +50,7 @@ export const AgendaEvents: FC = () => {
                         key={date}
                         heading={
                             agendaModeGroupBy === "date"
-                                ? format(parseISO(date), "EEEE, MMMM d, yyyy")
+                                ? format(parseISO(date), "yyyy/MM/dd(EEEE)", {locale: ko})
                                 : COLORS_KO[groupedEvents![0].color]
                         }
                     >
@@ -110,7 +111,7 @@ export const AgendaEvents: FC = () => {
                                                         {format(event.startDate, "yyyy/MM/dd")}
                                                     </p>
                                                     <p className="text-sm">
-                                                        {formatTime(event.startDate, use24HourFormat)} 부터
+                                                        {formatTime(event.startDate, use24HourFormat)}
                                                     </p>
                                                 </>
                                             )}
