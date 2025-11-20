@@ -1,5 +1,5 @@
 import {Suspense} from "react";
-import {CalendarSkeleton} from "@/widgets/calendar/ui/skeletons/calendar-skeleton.tsx";
+import {CalendarSkeleton} from "@/features/schedule/ui/calendar/skeletons/calendar-skeleton.tsx";
 import {Calendar} from "@/widgets/calendar/ui/calendar.tsx";
 
 export default function SchedulePage() {
