@@ -1,8 +1,8 @@
 import {CalendarBody} from "@/widgets/calendar/ui/calendar-body.tsx";
-import {CalendarProvider} from "@/widgets/calendar/ui/contexts/calendar-context.tsx";
-import {DndProvider} from "@/widgets/calendar/ui/contexts/dnd-context.tsx";
-import {CalendarHeader} from "@/widgets/calendar/ui/header/calendar-header.tsx";
-import {getEvents} from "@/widgets/calendar/ui/requests.ts";
+import {CalendarProvider} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {DndProvider} from "@/features/schedule/ui/calendar/contexts/dnd-context.tsx";
+import {CalendarHeader} from "@/features/schedule/ui/calendar/header/calendar-header.tsx";
+import {getEvents} from "@/entities/schedule/calendar/requests.ts";
 
 async function getCalendarData() {
     return {

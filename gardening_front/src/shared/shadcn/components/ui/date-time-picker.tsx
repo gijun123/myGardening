@@ -7,8 +7,8 @@ import {FormControl, FormItem, FormLabel, FormMessage,} from "@/shared/shadcn/co
 import {Popover, PopoverContent, PopoverTrigger,} from "@/shared/shadcn/components/ui/popover";
 import {ScrollArea, ScrollBar} from "@/shared/shadcn/components/ui/scroll-area";
 import {cn} from "@/shared/shadcn/lib/utils";
-import {useCalendar} from "@/widgets/calendar/ui/contexts/calendar-context";
-import type {TEventFormData} from "@/widgets/calendar/ui/schemas.ts";
+import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context";
+import type {TEventFormData} from "@/entities/schedule/calendar/schemas.ts";
 import {ko} from "date-fns/locale/ko";
 
 interface DatePickerProps {
