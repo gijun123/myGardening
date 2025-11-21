@@ -10,19 +10,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PlantInfoDTO {
-    private String commonName;
-    private String environment;
-    private String family;
-    private String fertilizer;
-    private String genus;
-    private String light;
-    private String origin;
-    private String pestsTips;
-    private String potRepot;
-    private String propagation;
     private String scientificName;
-    private String soil;
+    private String commonName;
+    private String family;
+    private String genus;
+    private String origin;
+    private String environment;
+    private String light;
     private String temperatureHumidity;
     private String watering;
+    private String soil;
+    private String fertilizer;
+    private String potRepot;
+    private String propagation;
+    private String pestsTips;
+    private String commonUses;
+    private String culturalSignificance;
+    private String description;
+    private String sampleImageUrl;
 
 }

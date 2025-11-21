@@ -181,12 +181,31 @@ export function Header() {
                         ))}
                     </div>
                 </NavigationMenu>
-                <div className="flex flex-col gap-2">
-                    <Button variant="outline" className="w-full bg-transparent">
-                        회원가입
-                    </Button>
-                    <Button className="w-full">로그인</Button>
-                </div>
+                {accessToken ? (
+                    <>
+                        <div className="flex items-center gap-2 cursor-pointer"
+                             onClick={() => navigate('/auth/dashboard')}>
+                            <img
+                                src={userInfo?.profileUrl}
+                                alt="profile"
+                                className="w-8 h-8 rounded-full border"
+                            />
+                            <span className="text-sm font-medium">{userInfo?.nickname}</span>
+                        </div>
+
+                        <Button variant="outline" onClick={() => navigate('/auth/dashboard')}>
+                            대시보드
+                        </Button>
+                        <Button variant="outline" onClick={() => navigate('/oauth/edit-complete-profile')}>
+                            내정보 수정
+                        </Button>
+                    </>
+                ) : (
+                    <>
+                        <Button variant="outline" onClick={() => navigate(registerLink)}>회원가입</Button>
+                        <Button onClick={() => navigate(loginLink)}>로그인</Button>
+                    </>
+                )}
             </MobileMenu>
         </header>
     );

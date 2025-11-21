@@ -49,7 +49,22 @@ public class SecurityConfig {
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //JWT 토큰 기반 인증 서버에서 불필요한 세션 생성 및 검증 로딕 차단하여 빼버리기
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(requests -> requests
+
+                .authorizeHttpRequests(requests ->
+                        requests
+                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/existIdCheck").permitAll()
+                                .requestMatchers("/auth/existPhoneCheck").permitAll()
+                                .requestMatchers("/auth/signup").permitAll()
+                                .requestMatchers("/auth/refresh").permitAll()
+                                .requestMatchers("/oauth/**").permitAll() // OAuth 관련도 열기
+
+                                // 인증이 필요한 경로
+                                .requestMatchers("/auth/**").authenticated()
+                                .requestMatchers("/oauth/**").authenticated()
+                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/shop/**").hasRole("SHOP_OWNER")
+                        .requestMatchers("/gardener/**").hasRole("GARDENER")
                         .anyRequest().permitAll() // 요청을 허용할 url
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

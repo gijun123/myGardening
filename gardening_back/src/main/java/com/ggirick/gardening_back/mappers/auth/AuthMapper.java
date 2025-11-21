@@ -12,6 +12,8 @@ public interface AuthMapper {
     //  ID로 인증 정보를 조회 (PW 검증에 사용)
     AuthDTO selectAuthById(@Param("id") String id);
 
+    AuthDTO selectAuthByUserUid(@Param("userUid") String userUid);
+
     // Provider로 인증 정보 조회
     AuthDTO selectAuthByProvider(@Param("provider") String provider, @Param("providerUserId") String providerUserid);
 

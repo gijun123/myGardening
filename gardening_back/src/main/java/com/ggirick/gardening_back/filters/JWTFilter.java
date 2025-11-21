@@ -2,6 +2,7 @@ package com.ggirick.gardening_back.filters;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ggirick.gardening_back.dto.auth.UserTokenDTO;
+import com.ggirick.gardening_back.mappers.auth.UserMapper;
 import com.ggirick.gardening_back.utils.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
 
+    private final UserMapper userMapper;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -34,6 +37,7 @@ public class JWTFilter extends OncePerRequestFilter {
         if(path.startsWith("/auth/existIdCheck")
                 || path.startsWith("/auth/signup")
                 || path.startsWith("/auth/register")
+                || path.startsWith("/auth/refresh")
                 || path.startsWith("/oauth")) {
             filterChain.doFilter(request, response);
             return;
@@ -63,25 +67,19 @@ public class JWTFilter extends OncePerRequestFilter {
                     .build();
 
             // 5. 권한 정보 조회
-            // 권한(ROLE) 정보는 토큰에 넣지 않고, DB 조회를 통해 최신 정보를 가져오는 것이 일반적입니다.
-//            List<GrantedAuthority> authorities = authService.getUserAuthorities(uid);
-//
             System.out.println("접속자 UID: " + uid);
-//            System.out.println("접속자 권한: " + authorities.toString());
-//
-            // 6. SecurityContext에 인증 정보 설정
-            //일단은 빈 리스트로 설정해줌
+            List<String> roles = userMapper.selectRoleNameByUserUid(uid); // uid = userUid
+            List<SimpleGrantedAuthority> authorities = roles.stream()
+                    .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                    .toList();
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userTokenDTO, null, Collections.emptyList());
+                    new UsernamePasswordAuthenticationToken(userTokenDTO, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
         } catch (Exception e) {
             // 토큰 만료, 변조, 서명 오류 등의 경우
             SecurityContextHolder.clearContext();
-            // **주의**: 만료 에러(TokenExpiredException)는 여기서 처리할 필요 없이,
-            // Interceptor와 마찬가지로 401을 반환하게 하고 클라이언트가 Refresh API를 호출하도록 유도합니다.
-            // 하지만 이 필터에서는 단순히 다음 필터로 넘겨서 SecurityConfig의 ExceptionHandler가 처리하게 할 수도 있습니다.
             System.out.println("JWT 인증 실패: " + e.getMessage());
         }
 
