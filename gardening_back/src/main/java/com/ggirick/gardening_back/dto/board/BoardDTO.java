@@ -24,7 +24,7 @@ public class BoardDTO {
     private String contents;
 
     @Schema(description = "공지여부", example = "Y/N")
-    private int isNotification;
+    private String isNotification;
 
     @Schema(description = "글 상태", example = "Active/Delete")
     private String status;
@@ -32,8 +32,8 @@ public class BoardDTO {
     @Schema(description = "조회수", example = "0")
     private int viewCount;
 
-    @Schema(description = "작성일자", example = "testId")
+    @Schema(description = "작성일자", example = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createdAt;
-    @Schema(description = "수정일자", example = "testId")
+    @Schema(description = "수정일자", example = "yyyy-MM-dd HH:mm:ss")
     private Timestamp updatedAt;
 }

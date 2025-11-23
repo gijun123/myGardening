@@ -31,6 +31,7 @@ public class JWTFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getServletPath();
+
         if(path.startsWith("/auth/existIdCheck")
                 || path.startsWith("/auth/signup")
                 || path.startsWith("/auth/register")

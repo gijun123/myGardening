@@ -3,6 +3,7 @@ package com.ggirick.gardening_back.dto.board;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -11,8 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BoardResponseDTO {
+    // 목록 + 상세 공통
     @Schema(description = "글 번호", example = "1")
-    private Long id;
+    private int id;
     @Schema(description = "글 제목", example = "몬스테라 질문")
     private String title;
     @Schema(description = "글 내용", example = "질문있습니다.")
@@ -39,7 +41,15 @@ public class BoardResponseDTO {
     @Schema(description = "댓글수", example = "33")
     private int commentCount;
 
+    // 작성, 수정 일자
+    @Schema(description = "작성일자", example = "yyyy-mm-dd HH-MM-SS")
+    private Timestamp createdAt;
+    @Schema(description = "수정일자", example = "yyyy-mm-dd HH-MM-SS")
+    private Timestamp updatedAt;
+
     // 기타
+    @Schema(description = "공지여부", example = "Y/N")
+    private String isNotification;
     @Schema(description = "올린 이미지", example = "이미지")
     private List<BoardFileDTO> files;
     @Schema(description = "게시글 태그 목록", example = "몬스테라/실내용")
@@ -47,6 +57,10 @@ public class BoardResponseDTO {
 
     @Schema(description = "팔로우 여부", example = "true/false")
     private boolean isFollowed;
+    @Schema(description = "좋아요 여부", example = "true/false")
+    private boolean isLiked;
+    @Schema(description = "북마크 여부", example = "true/false")
+    private boolean isBookmarked;
 
 }
 
