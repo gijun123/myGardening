@@ -7,9 +7,9 @@ import type { Configuration } from './configuration{{importFileExtension}}';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
-import {axiosInstance} from "@/shared/api/axiosInterceptor.ts";
+import {axiosInterceptor} from "@/shared/api/axiosInterceptor.ts";
 
-export const BASE_PATH = "{{{basePath}}}".replace(/\/+$/, "");
+export const BASE_PATH = axiosInterceptor.defaults.baseURL;
 
 export const COLLECTION_FORMATS = {
     csv: ",",
@@ -27,7 +27,7 @@ export class BaseAPI {
     protected configuration: Configuration | undefined;
 
     // @ts-ignore
-    constructor(configuration?: Configuration, protected basePath: string = BASE_PATH, protected axios: AxiosInstance = axiosInstance) {
+    constructor(configuration?: Configuration, protected basePath: string = BASE_PATH, protected axios: AxiosInstance = axiosInterceptor) {
         if (configuration) {
             this.configuration = configuration;
             this.basePath = configuration.basePath ?? basePath;
