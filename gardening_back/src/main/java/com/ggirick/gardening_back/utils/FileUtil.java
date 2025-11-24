@@ -50,7 +50,7 @@ public class FileUtil {
         return getPublicUrl(objectName);
     }
 
-    // 파일 업로드 후 실제 저장된 파일명(sysName)과 공개 URL을 함께 반환
+    // 파일 업로드 후 실제 저장된 파일명(oriName, sysName)과 공개 URL을 함께 반환
     public Map<String, String> uploadFileAndGetInfo(String oriName, String path, MultipartFile file) throws Exception {
 
         String sysName = fileUpload(oriName, path, file);
@@ -72,6 +72,18 @@ public class FileUtil {
         return blob.getContent();
     }
 
+    // 폴더 삭제
+    public void deleteFolder(String folderName) {
+        // folderName 예: "board/images" 또는 "board/images/"
+        String prefix = folderName.endsWith("/") ? folderName : folderName + "/";
+
+        Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(prefix)).iterateAll();
+
+        for (Blob blob : blobs) {
+            storage.delete(blob.getBlobId());
+        }
+    }
+
     // 파일 삭제
     public void deleteFile(String sysName) {
         BlobId blobId = BlobId.of(bucketName, sysName);
@@ -79,6 +91,4 @@ public class FileUtil {
         boolean result = storage.delete(blobId);
         log.info("Deleted? {}", result);
     }
-
-
 }
