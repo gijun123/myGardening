@@ -3,6 +3,7 @@ package com.ggirick.gardening_back.controllers.schedule;
 import com.ggirick.gardening_back.dto.auth.UserTokenDTO;
 import com.ggirick.gardening_back.dto.schedule.CalendarDTO;
 import com.ggirick.gardening_back.dto.schedule.InsertCalendarDTO;
+import com.ggirick.gardening_back.services.schedule.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/schedule")
 public class ScheduleController {
+    private final ScheduleService scheduleService;
+
     @Operation(summary = "요청자의 일정 가져오기")
     @ApiResponse(
             responseCode = "200",
@@ -33,7 +36,7 @@ public class ScheduleController {
     @GetMapping
     public ResponseEntity<List<CalendarDTO>> getSchedules(@AuthenticationPrincipal UserTokenDTO userInfo) {
         if(userInfo != null) {
-
+            return ResponseEntity.ok(scheduleService.getScheduleList(userInfo.getUid()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -59,7 +62,6 @@ public class ScheduleController {
                                                       @RequestBody InsertCalendarDTO calendarInfo) {
         if(userInfo != null) {
             userInfo.getUid();
-
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
