@@ -23,6 +23,11 @@
         FROM AUTH
         WHERE ID = #{id}
     </select>
+    <select id="selectAuthByUserUid" resultMap="authMap">
+        SELECT *
+        FROM AUTH
+        WHERE userUid = #{userUid}
+    </select>
 
     <insert id="insertLoginHistory">
         INSERT INTO LOGIN_HISTORY (LOGIN_ID, USER_UID,SESSION_ID, IP_ADDRESS, LOGIN_AT)
@@ -68,4 +73,5 @@
                      SYSTIMESTAMP
                  )
     </insert>
+
 </mapper>

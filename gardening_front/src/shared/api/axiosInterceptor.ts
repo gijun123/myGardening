@@ -18,7 +18,7 @@ function decodeJwt(token: string) {
 
 
 
-const axiosInterceptor: AxiosInstance = axios.create({
+export const axiosInterceptor: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
 });
 

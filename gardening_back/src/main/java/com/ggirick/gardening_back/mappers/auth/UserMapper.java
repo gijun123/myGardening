@@ -2,9 +2,12 @@ package com.ggirick.gardening_back.mappers.auth;
 
 import com.ggirick.gardening_back.dto.auth.AuthDTO;
 import com.ggirick.gardening_back.dto.auth.UserInfoDTO;
+import com.ggirick.gardening_back.dto.auth.UserRoleDTO;
 import com.ggirick.gardening_back.dto.auth.UsersDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -28,4 +31,7 @@ public interface UserMapper {
     String randomUserNickName();
 
     int updateUserInfo(UserInfoDTO dto);
+
+    int insertUserRole(UserRoleDTO dto);
+    List<String> selectRoleNameByUserUid(@Param("userUid") String userUid);
 }

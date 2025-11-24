@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ggirick.gardening_back.mappers.plant.PlantMapper">
+
+
+    <select id="getPlantInfo">
+        SELECT
+            SCIENTIFIC_NAME      AS scientificName,
+            COMMON_NAME          AS commonName,
+            FAMILY               AS family,
+            GENUS                AS genus,
+            ORIGIN               AS origin,
+            ENVIRONMENT          AS environment,
+            LIGHT                AS light,
+            TEMPERATURE_HUMIDITY AS temperatureHumidity,
+            WATERING             AS watering,
+            SOIL                 AS soil,
+            FERTILIZER           AS fertilizer,
+            POT_REPOT            AS potRepot,
+            PROPAGATION          AS propagation,
+            PESTS_TIPS           AS pestsTips,
+            DESCRIPTION          AS description,
+            COMMON_USES          AS commonUses,
+            SAMPLE_IMAGE_URL     AS sampleImageUrl,
+            CULTURAL_SIGNIFICANCE AS culturalSignificance
+
+        FROM PLANT_INFO
+        WHERE SCIENTIFIC_NAME = #{scientificName}
+    </select>
+
+    <insert id="insertPlantInfo" >
+        INSERT INTO PLANT_INFO (
+            COMMON_NAME, SCIENTIFIC_NAME, FAMILY, GENUS,
+            LIGHT, WATERING, SOIL, ENVIRONMENT, ORIGIN,
+            FERTILIZER, PESTS_TIPS, POT_REPOT, PROPAGATION, TEMPERATURE_HUMIDITY,
+            COMMON_USES, CULTURAL_SIGNIFICANCE, DESCRIPTION,  SAMPLE_IMAGE_URL
+        ) VALUES (
+                     #{commonName, jdbcType=VARCHAR},
+                     #{scientificName, jdbcType=VARCHAR},
+                     #{family, jdbcType=VARCHAR},
+                     #{genus, jdbcType=VARCHAR},
+
+                     #{light, jdbcType=VARCHAR},
+                     #{watering, jdbcType=VARCHAR},
+                     #{soil, jdbcType=VARCHAR},
+                     #{environment, jdbcType=VARCHAR},
+
+                     #{origin, jdbcType=VARCHAR},
+                     #{fertilizer, jdbcType=VARCHAR},
+                     #{pestsTips, jdbcType=VARCHAR},
+                     #{potRepot, jdbcType=VARCHAR},
+                     #{propagation, jdbcType=VARCHAR},
+                     #{temperatureHumidity, jdbcType=VARCHAR},
+
+                     #{commonUses, jdbcType=VARCHAR},
+                     #{culturalSignificance, jdbcType=VARCHAR},
+                     #{description, jdbcType=VARCHAR},
+                     #{sampleImageUrl, jdbcType=VARCHAR}
+                 )
+    </insert>
+    <insert id="insertPlantInfoRequestFile">
+        INSERT INTO PLANT_INFO_REQUEST_FILE(
+                                            ID,
+                                            REQUEST_USER_UID,
+                                            url,
+                                            ORI_NAME,
+                                            SYS_NAME,
+                                            CREATED_AT
+        )VALUES (
+                 PLANT_INFO_REQUEST_FILE_SEQ.nextval,
+                 #{ requestUserUid},
+                 #{url},
+                 #{oriName},
+                 #{sysName},
+                 SYSTIMESTAMP
+                        )
+    </insert>
+    <insert id="insertPlantSearchRequestLog"  keyProperty="logId">
+        <!-- 시퀀스 NEXTVAL을 DTO.logId에 세팅 -->
+        <selectKey keyProperty="logId" resultType="long" order="BEFORE">
+            SELECT PLANT_SEARCH_REQUEST_LOG_SEQ.nextval FROM dual
+        </selectKey>
+
+        INSERT INTO PLANT_SEARCH_REQUEST_LOG(
+        log_id,
+        api_response,
+        matched_scientific_name,
+        user_uid,
+        created_at
+        ) VALUES (
+        #{logId},
+        #{apiResponse, jdbcType=CLOB},
+        #{matchedScientificName},
+        #{userUid},
+        SYSTIMESTAMP
+        )
+    </insert>
+
+
+    <insert id="insertPlantSearchRequestFile">
+        INSERT INTO PLANT_SEARCH_REQUEST_FILE(
+            ID,
+            url,
+            ORI_NAME,
+            SYS_NAME,
+            LOG_ID,
+            CREATED_AT
+        )VALUES (
+                    PLANT_SEARCH_REQUEST_FILE_SEQ.nextval,
+                    #{url},
+                    #{oriName},
+                    #{sysName},
+                    #{logId},
+                    SYSTIMESTAMP
+                )
+    </insert>
+</mapper>
