@@ -43,7 +43,7 @@ public class BoardController {
     @GetMapping
     public ResponseEntity<List<BoardResponseDTO>> getList(
             @RequestParam(required = false) Integer cursorId,
-            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "9") int limit,
             @AuthenticationPrincipal UserTokenDTO userInfo
     ) {
         String loginUid = (userInfo != null) ? userInfo.getUid() : null;

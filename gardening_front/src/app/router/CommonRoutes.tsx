@@ -15,19 +15,13 @@ const BoardRoutes = lazy(() => import("./BoardRoutes"));
 
 export function CommonRoutes() {
     return (
-            <Routes>
-                <Route path="/schedule" element={<ScheduleRoutes/>}/>
-                <Route path="/board" element={<BoardRoutes/>}/>
-                <Route path="*" element={<HomePage/>}/>
-                <Route path="/auth/dashboard" element={<DashboardPage/>} />
-                <Route path="/auth/login" element={<LoginPage/>}/>
-                <Route path="/auth/register" element={<RegisterPage/>}/>
         <Suspense fallback={<div>Loading...</div>}>
             <Routes>
                 {/* 로그인 필요 없는 라우트 */}
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/register" element={<RegisterPage />} />
                 <Route path="/oauth/redirect" element={<OAuthRedirectHandler />} />
+                <Route path="/board" element={<BoardRoutes/>}/>
                 <Route path="*" element={<HomePage />} />
 
                 {/* 로그인 필요 라우트 그룹 */}

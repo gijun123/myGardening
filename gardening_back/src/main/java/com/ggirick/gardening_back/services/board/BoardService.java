@@ -5,8 +5,6 @@ import com.ggirick.gardening_back.dto.board.BoardFileDTO;
 import com.ggirick.gardening_back.dto.board.BoardRequestDTO;
 import com.ggirick.gardening_back.dto.board.BoardResponseDTO;
 import com.ggirick.gardening_back.mappers.board.BoardMapper;
-import com.ggirick.gardening_back.services.plant.PlantNetService;
-import com.ggirick.gardening_back.services.tag.PlantTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +24,6 @@ public class BoardService {
     private final BoardBookmarkService boardBookmarkService;
 
     private final BoardTagService boardTagService;
-    private final PlantNetService plantNetService;
-    private final PlantTagService plantTagService;
 
     // 커서 기반 게시글 목록
     public List<BoardResponseDTO> getListByCursor(Integer cursorId, int limit, String loginUid) {

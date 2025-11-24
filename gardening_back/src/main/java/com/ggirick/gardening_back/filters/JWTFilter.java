@@ -39,7 +39,8 @@ public class JWTFilter extends OncePerRequestFilter {
                 || path.startsWith("/auth/signup")
                 || path.startsWith("/auth/register")
                 || path.startsWith("/auth/refresh")
-                || path.startsWith("/oauth")) {
+                || path.startsWith("/oauth")
+                || path.startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }

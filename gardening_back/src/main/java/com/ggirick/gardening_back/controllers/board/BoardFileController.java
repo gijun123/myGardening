@@ -38,9 +38,9 @@ public class BoardFileController {
                     array = @ArraySchema(schema = @Schema(implementation = BoardFileDTO.class))
             )
     )
-    @GetMapping
+    @GetMapping("/{boardId}")
     public ResponseEntity<List<BoardFileDTO>> getFilesByBoardId(
-            @RequestParam int boardId
+            @PathVariable int boardId
     ) {
         return ResponseEntity.ok(boardFileService.getFileListByBoardId(boardId));
     }
@@ -52,7 +52,7 @@ public class BoardFileController {
             description = "조회 성공",
             content = @Content(schema = @Schema(implementation = BoardFileDTO.class))
     )
-    @GetMapping("/{fileId}")
+    @GetMapping
     public ResponseEntity<BoardFileDTO> getFileDetail(
             @PathVariable int fileId
     ) {
@@ -60,33 +60,5 @@ public class BoardFileController {
         if (dto == null) return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(dto);
-    }
-
-    // 파일 삭제
-    @Operation(summary = "파일 삭제", description = "파일 ID로 파일을 삭제한다.")
-    @ApiResponse(responseCode = "200", description = "삭제 성공")
-    @DeleteMapping("/{fileId}")
-    public ResponseEntity<Void> deleteFile(
-            @PathVariable int fileId,
-            @AuthenticationPrincipal UserTokenDTO userInfo
-    ) {
-        BoardFileDTO dto = boardFileService.getFileById(fileId);
-        if (dto == null) return ResponseEntity.notFound().build();
-
-        // 1. 파일이 속한 게시글 번호 가져오기
-        int boardId = dto.getBoardId();
-
-        // 2. 게시글 조회
-        BoardResponseDTO board = boardService.getDetailById(boardId, userInfo != null ? userInfo.getUid() : null);
-        if (board == null) return ResponseEntity.notFound().build();
-
-        // 3. 작성자 본인인지 확인
-        if (!board.getWriterUid().equals(userInfo.getUid())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        // 4. 삭제 수행
-        boardFileService.deleteFile(dto);
-        return ResponseEntity.ok().build();
     }
 }

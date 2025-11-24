@@ -1,6 +1,8 @@
 package com.ggirick.gardening_back.controllers.tag;
 
+import com.ggirick.gardening_back.dto.auth.UserTokenDTO;
 import com.ggirick.gardening_back.dto.tag.PlantTagDTO;
+import com.ggirick.gardening_back.services.plant.PlantService;
 import com.ggirick.gardening_back.services.tag.PlantTagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -9,17 +11,36 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tags")
+@RequestMapping("/tags")
 public class PlantTagController {
 
     private final PlantTagService plantTagService;
+
+    // 이미지 분석해서 태그 추천
+    @Operation(summary = "사진을 기반으로 식물을 추출합니다. 파일 업로드를 사용합니다.",
+            description = "결과에 따라 다른 ResponseEntity를 반환한다. 식물이 인식된다면 식물 학명을 포함한 식물 정보를 PlantInfo 형태가 반환된다. ")
+    @PostMapping("/recommendTags")
+    public ResponseEntity<List<PlantTagDTO>> recommendTags(
+            @AuthenticationPrincipal UserTokenDTO userTokenDTO,
+
+            @RequestPart(value = "file", required = true) MultipartFile file,
+            @RequestParam(value = "organ", defaultValue = "flower") String organ) throws Exception{
+
+        List<PlantTagDTO> list = plantTagService.getImagePlantTags(file, organ, userTokenDTO.getUid());
+        return ResponseEntity.ok(list);
+    }
 
     // 학명 기반 태그 조회
     @Operation(
@@ -41,7 +62,7 @@ public class PlantTagController {
                     )
             )
     })
-    @GetMapping("/by-scientific-name")
+    @GetMapping
     public ResponseEntity<List<PlantTagDTO>> getTagsByScientificName(
             @RequestParam String scientificName
     ) {
@@ -67,7 +88,7 @@ public class PlantTagController {
                     )
             )
     })
-    @PostMapping("/by-ids")
+    @PostMapping
     public ResponseEntity<List<PlantTagDTO>> getTagsByIds(
             @RequestBody List<Integer> tagIds
     ) {

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -95,6 +94,7 @@ public class BoardCommentController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateComment(
+            @PathVariable int boardId,
             @PathVariable int id,
             @RequestBody BoardCommentDTO dto,
             @AuthenticationPrincipal UserTokenDTO user
@@ -123,6 +123,7 @@ public class BoardCommentController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteComment(
+            @PathVariable int boardId,
             @PathVariable int id
     ) {
         boardCommentService.deleteComment(id);
@@ -139,27 +140,10 @@ public class BoardCommentController {
     })
     @PatchMapping("/block/{id}")
     public ResponseEntity<Void> blockComment(
+            @PathVariable int boardId,
             @PathVariable int id
     ) {
         boardCommentService.blockComment(id);
         return ResponseEntity.ok().build();
-    }
-
-    @Operation(
-            summary = "댓글 좋아요 토글",
-            description = "해당 댓글에 좋아요를 추가하거나 취소한다. "
-                    + "이미 눌렀다면 좋아요 취소, 아니면 좋아요 추가."
-    )
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "좋아요 상태 변경됨")
-    })
-    @PostMapping("/like/{commentId}")
-    public ResponseEntity<String> toggleLike(
-            @PathVariable int commentId,
-            @AuthenticationPrincipal UserTokenDTO userInfo
-    ) {
-        boolean liked = boardCommentService.toggleLike(commentId, userInfo.getUid());
-
-        return ResponseEntity.ok(liked ? "좋아요 추가" : "좋아요 취소");
     }
 }
