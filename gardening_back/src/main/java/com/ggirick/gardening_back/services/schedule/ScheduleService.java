@@ -2,6 +2,7 @@ package com.ggirick.gardening_back.services.schedule;
 
 import com.ggirick.gardening_back.dto.schedule.CalendarDTO;
 import com.ggirick.gardening_back.dto.schedule.InsertCalendarDTO;
+import com.ggirick.gardening_back.dto.schedule.PatchCalendarDTO;
 import com.ggirick.gardening_back.mappers.schedule.ScheduleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,15 @@ public class ScheduleService {
                 .recurrence(calendarInfo.getRecurrence())
                 .recurrenceEnd(calendarInfo.getRecurrenceEnd())
                 .build());
+    }
+    
+    // 일정 삭제
+    public int deleteById(int id) {
+        return scheduleMapper.deleteSchedule(id);
+    }
+    
+    // 일정 업데이트
+    public int updateById(PatchCalendarDTO updateInfo) {
+        return scheduleMapper.updateById(updateInfo);
     }
 }
