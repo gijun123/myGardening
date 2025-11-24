@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {create} from "zustand";
 
 export interface TerrariumObject {
     id: string;
@@ -11,21 +11,30 @@ export interface TerrariumObject {
     url?: string;
 }
 
-export function useCanvasStore() {
-    const [objects, setObjects] = useState<TerrariumObject[]>([]);
-    const [selectedId, setSelectedId] = useState<string | null>(null);
+interface CanvasStore {
+    objects: TerrariumObject[];
+    selectedId: string | null;
+    setSelectedId: (id: string | null) => void;
+    setObjects: (objects: TerrariumObject[]) => void;
+    addObject: (obj: TerrariumObject) => void;
+    saveCanvas: () => void;
+    loadCanvas: () => void;
+}
 
-    const addObject = (obj: TerrariumObject) => setObjects(prev => [...prev, obj]);
+export const useCanvasStore = create<CanvasStore>((set, get) => ({
+    objects: [],
+    selectedId: null,
+    setSelectedId: (id) => set({ selectedId: id }),
+    setObjects: (objects) => set({ objects }),
+    addObject: (obj) => set({ objects: [...get().objects, obj] }),
 
-    const saveCanvas = () => {
-        localStorage.setItem("terrarium-canvas", JSON.stringify(objects));
-    };
+    saveCanvas: () => {
+        localStorage.setItem("terrarium-canvas", JSON.stringify(get().objects));
+    },
 
-    const loadCanvas = () => {
+    loadCanvas: () => {
         const json = localStorage.getItem("terrarium-canvas");
         if (!json) return;
-        setObjects(JSON.parse(json));
-    };
-
-    return { objects, selectedId, setSelectedId, addObject, saveCanvas, loadCanvas };
-}
+        set({ objects: JSON.parse(json) });
+    },
+}));
