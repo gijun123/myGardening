@@ -274,6 +274,13 @@ public class AuthService {
                     .nickname(userMapper.randomUserNickName())
                     .build();
 
+            //user_role. 등록
+            userMapper.insertUserRole(UserRoleDTO.builder()
+                    .userUid(userUid)
+                    .assignedBy("system")
+                    .roleId(1)
+                    .build());
+
             int infoInsert = userMapper.insertUserInfo(userInfoDTO);
             if (infoInsert != 1) {
                 throw new RuntimeException("유저정보 생성 실패");

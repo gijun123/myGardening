@@ -97,4 +97,25 @@
             updated_at = SYSTIMESTAMP
         WHERE uuid = #{uuid}
     </update>
+    <insert id="insertUserRole">
+     INSERT INTO USER_ROLE(
+    USER_UID,
+    ROLE_ID,
+    ASSIGNED_BY,
+    ASSIGNED_AT
+     )VALUES (
+              #{userUid},
+              #{roleId},
+              #{assignedBy},
+              SYSTIMESTAMP
+                  )
+
+
+    </insert>
+    <select id="selectRoleNameByUserUid" resultType="string" parameterType="string">
+        SELECT r.ROLE_NAME
+        FROM user_role ur
+                 JOIN role r ON ur.ROLE_ID = r.ROLE_ID
+        WHERE ur.USER_UID = #{userUid}
+    </select>
 </mapper>
