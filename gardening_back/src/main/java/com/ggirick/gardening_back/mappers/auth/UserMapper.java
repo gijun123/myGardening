@@ -26,6 +26,8 @@ public interface UserMapper {
     UserInfoDTO selectUserInfoByUid(@Param("uid") String uid);
 
     AuthDTO selectUserByPhone(@Param("phone") String phone);
+
+    void updateUserEmailAndPhoneToAuth(@Param("userUid") String userUid, @Param("email") String email, @Param("phone") String phone);
     
     //랜덤 닉네임 정하기
     String randomUserNickName();

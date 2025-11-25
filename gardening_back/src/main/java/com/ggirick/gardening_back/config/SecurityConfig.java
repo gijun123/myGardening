@@ -2,7 +2,11 @@ package com.ggirick.gardening_back.config;
 
 import com.ggirick.gardening_back.filters.JWTFilter;
 import com.ggirick.gardening_back.handlers.OAuthLoginSuccessHandler;
+import com.ggirick.gardening_back.mappers.auth.AuthMapper;
+import com.ggirick.gardening_back.mappers.auth.UserMapper;
+import com.ggirick.gardening_back.services.auth.AuthService;
 import com.ggirick.gardening_back.services.auth.OAuth2UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,14 +37,11 @@ public class SecurityConfig {
     private final JWTFilter jwtFilter;
 
 
-    private final OAuth2UserService oAuth2UserService;
-
-
     private final OAuthLoginSuccessHandler successHandler;
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, OAuth2UserService oAuth2UserService) throws Exception {
 
         // 옛날 지원 security 문법들은 다 공식처럼 꺼놓고 들어가는게 일반적임
         http
@@ -76,8 +77,9 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .failureHandler((request, response, exception) -> {
                             exception.printStackTrace();
-                            response.sendRedirect("/login?error=true");
+                            response.sendRedirect("/error?error=true"); // 존재하는 페이지로
                         })
+
 
                 );
 
@@ -104,5 +106,11 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // BCrypt방식으로 암호화.
     }
-
+    @Bean
+    public OAuth2UserService oAuth2UserService(HttpSession session,
+                                               AuthMapper authMapper,
+                                               UserMapper userMapper,
+                                               AuthService authService) {
+        return new OAuth2UserService(session, authMapper, userMapper, authService);
+    }
 }

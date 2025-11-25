@@ -34,13 +34,11 @@
 
     <!--신규 유저 정보 등록-->
 
-    <insert id="insertUserInfo">
+    <insert id="insertUserInfo" parameterType="com.ggirick.gardening_back.dto.auth.UserInfoDTO">
         INSERT INTO user_info
             (uuid,
              name,
              nickname,
-             email,
-             phone,
              address,
              address_detail,
              zipcode,
@@ -53,8 +51,6 @@
             (#{uuid},
              #{name, jdbcType=VARCHAR},
              #{nickname, jdbcType=VARCHAR},
-             #{email, jdbcType=VARCHAR},
-             #{phone, jdbcType=VARCHAR},
              #{address, jdbcType=VARCHAR},
              #{addressDetail, jdbcType=VARCHAR},
              #{zipcode, jdbcType=VARCHAR},
@@ -76,18 +72,18 @@
                 AS NICKNAME
         FROM dual
     </select>
-    <select id="selectUserInfoByUid">
-    select *
-        from user_info
-    where uuid=#{uid}
+    <select id="selectUserInfoByUid" >
+        SELECT ui.*, a.email, a.phone
+        FROM user_info ui
+                 LEFT JOIN auth a
+                           ON ui.uuid = a.user_uid
+        WHERE ui.uuid = #{uid}
     </select>
     <update id="updateUserInfo">
         UPDATE user_info
         SET
             name = #{name, jdbcType=VARCHAR},
             nickname = #{nickname, jdbcType=VARCHAR},
-            email = #{email, jdbcType=VARCHAR},
-            phone = #{phone, jdbcType=VARCHAR},
             address = #{address, jdbcType=VARCHAR},
             address_detail = #{addressDetail, jdbcType=VARCHAR},
             zipcode = #{zipcode, jdbcType=VARCHAR},
@@ -118,4 +114,9 @@
                  JOIN role r ON ur.ROLE_ID = r.ROLE_ID
         WHERE ur.USER_UID = #{userUid}
     </select>
+    <update id="updateUserEmailAndPhoneToAuth">
+        update auth
+        set phone=#{phone}, email=#{email}
+            where user_uid = #{userUid}
+    </update>
 </mapper>

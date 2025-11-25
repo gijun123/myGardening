@@ -18,7 +18,7 @@ export default function OAuthRedirectHandler() {
     }
 
     if (uid) {
-      navigate(`/oauth/complete-profile?uid=${uid}`);
+      navigate(`/oauth/initial-complete-profile?uid=${uid}`);
     } else {
       navigate("/auth/dashboard");
     }

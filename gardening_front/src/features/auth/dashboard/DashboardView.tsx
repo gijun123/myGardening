@@ -10,6 +10,7 @@ interface Props {
   refreshToken?: string | null;
   onLogout: () => void;
     userInfo?: {
+        roles?: string[];
         nickname?: string;
         profileUrl?: string;
     };
@@ -45,6 +46,17 @@ export default function DashboardView({ accessToken, refreshToken, onLogout,user
                         />
                     )}
                     <div className="text-lg font-bold">{userInfo.nickname ?? '닉네임 없음'}</div>
+                    <div className="flex gap-2 mt-2">
+                        {userInfo.roles?.map((role, idx) => (
+                            <span
+                                key={idx}
+                                className="px-2 py-1 text-sm rounded-full bg-blue-100 text-primary"
+                            >
+      {role}
+    </span>
+                        ))}
+                    </div>
+
                 </div>
             )}
 

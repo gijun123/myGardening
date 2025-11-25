@@ -139,9 +139,9 @@ PlantService {
      * @return bestMatch 이름이 담긴 Optional<String>
      */
 // ⭐ String sourcePath 대신 MultipartFile imageFile을 받도록 변경
-    public Optional<String> identifyPlantName(MultipartFile imageFile, String organ,String userUid) throws IOException {
+    public PlantInfoDTO identifyPlantName(MultipartFile imageFile, String organ,String userUid) throws IOException {
         if (imageFile.isEmpty()) {
-            return Optional.empty();
+            return null;
         }
 
         // 1. MultipartFile에서 RequestBody 생성
@@ -159,7 +159,7 @@ PlantService {
                 .build();
 
         // 3. PlantNet API 호출 (기존 코드와 동일)
-        String url = BASE_URL + PROJECT + "?api-key=" + API_KEY;
+        String url = BASE_URL + PROJECT + "?api-key=" + API_KEY+"&include-related-images=true";
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
@@ -171,7 +171,7 @@ PlantService {
             if (!response.isSuccessful()) {
                 // 응답이 성공적이지 않을 경우 예외 발생
 
-                return Optional.empty();
+                return null;
             }
 
             String responseBody = response.body().string();
@@ -184,16 +184,41 @@ PlantService {
 
             // PlantNet API의 응답 구조에 따라 bestMatch가 없거나 null일 수 있습니다.
             if (bestMatchNode.isMissingNode() || bestMatchNode.isNull()) {
-                return Optional.empty(); // bestMatch가 없으면 빈 Optional 반환
+                return null; // bestMatch가 없으면 빈 Optional 반환
             }
 
-            String bestMatch = bestMatchNode.asText();
+            // 1. 최적 일치 학명 (Best Match) 추출
+            String bestMatchName = root.path("bestMatch").asText();
+
+            // 2. 관련 이미지 URL 추출 (첫 번째 결과, 첫 번째 이미지 기준)
+            String imageUrl = null;
+
+            JsonNode results = root.path("results");
+            if (results.isArray() && results.size() > 0) {
+                JsonNode firstResult = results.get(0); // 가장 확률 높은 첫 번째 결과
+                JsonNode images = firstResult.path("images");
+
+                if (images.isArray() && images.size() > 0) {
+                    JsonNode firstImage = images.get(0); // 첫 번째 관련 이미지
+                    JsonNode urlNode = firstImage.path("url"); // URL 객체
+
+                    // 이미지 URL (중간 크기 'm'을 선호)
+                    imageUrl = urlNode.path("m").asText();
+                    if (imageUrl.isEmpty()) {
+                        imageUrl = urlNode.path("s").asText(); // 'm'이 없으면 's' 사용
+                    }
+                }
+            }
+
+            // 추출된 정보 출력
+            System.out.println("✅ 최적 일치 학명: " + bestMatchName);
+            System.out.println("✅ 관련 이미지 URL: " + imageUrl);
 
             //검색 이력을 로그로 저장
 
             PlantSearchRequestLogDTO logDTO = PlantSearchRequestLogDTO.builder()
                     .apiResponse(responseBody)
-                    .matchedScientificName(bestMatch)
+                    .matchedScientificName(bestMatchName)
                     .userUid(userUid)
                     .build();
 
@@ -205,12 +230,12 @@ PlantService {
             fileService.uploadFileAsyncPlantInfoRequest(imageFile, uploadFolderPath, logDTO.getLogId() );
 
 
-            if (bestMatch.isEmpty()) {
-                return Optional.empty(); // bestMatch가 비어있으면 빈 Optional 반환
+            if (bestMatchName.isEmpty()) {
+                return null; // bestMatch가 비어있으면 빈 Optional 반환
             }
             
 
-            return Optional.of(bestMatch);
+            return new PlantInfoDTO().builder().scientificName(bestMatchName).sampleImageUrl(imageUrl).build();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -274,9 +299,9 @@ PlantService {
         try {
             // 1. PlantNet API 호출 및 bestMatch 학명 식별
             // ⭐ MultipartFile을 identifyPlantName으로 전달
-            Optional<String> scientificNameOpt = identifyPlantName(imageFile, organ,userUid);
+            PlantInfoDTO plantInforesult = identifyPlantName(imageFile, organ,userUid);
 
-            if (scientificNameOpt.isEmpty()) {
+            if (plantInforesult == null) {
                 Map<String, Object> errorResponse = Map.of(
                         "statusCode", 404,
                         "message", "식별에 성공하지 못했습니다. 제대로 된 사진을 보내주세요."
@@ -285,12 +310,15 @@ PlantService {
             }
 
 
-            String scientificName = scientificNameOpt.get();
+            String scientificName = plantInforesult.getScientificName();
+            String imgUrl = plantInforesult.getSampleImageUrl();
 
             // 2. DB 조회
             PlantInfoDTO dto = getPlantInfo(scientificName);
+
             if (dto != null) {
                 // DB에 있으면 DB 정보 반환
+                dto.setSampleImageUrl(imgUrl);
                 return Optional.of(dto);
             }
 
@@ -304,6 +332,7 @@ PlantService {
             PlantInfoDTO plantInfoDTO = getPlantInfoFromGemini(prompt);
             // ⭐ 학명을 DTO에 설정 (DB 저장 및 반환 시 사용)
             plantInfoDTO.setScientificName(scientificName);
+            plantInfoDTO.setSampleImageUrl(imgUrl);
             plantMapper.insertPlantInfo(plantInfoDTO);
 
             // 5. Gemini 응답 (PlantInfoDTO) 반환
