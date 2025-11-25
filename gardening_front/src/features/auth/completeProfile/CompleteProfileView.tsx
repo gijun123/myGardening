@@ -46,7 +46,11 @@ interface Props {
     setErrors: React.Dispatch<React.SetStateAction<FieldErrors>>,
     handleSubmit: (e?: React.FormEvent) => Promise<void> | void,
     pageTitle?: string | undefined,
-    pageDescription?: string | undefined
+    pageDescription?: string | undefined,
+    phoneCheckMsg?: string;
+
+    phoneAvailable?:boolean|null;
+
 }
 
 export default function CompleteProfileView({
@@ -75,7 +79,7 @@ export default function CompleteProfileView({
                                                 setErrors,
                                                 handleSubmit,
                                                 pageTitle,
-                                                pageDescription
+                                                pageDescription,
                                             }: Props) {
 
     const validateField = (field: string, value: string) => {
@@ -85,15 +89,15 @@ export default function CompleteProfileView({
             case 'nickname':
                 return !value.trim()
                     ? '닉네임을 입력해주세요.'
-                    : value.length < 2 || value.length > 12
-                        ? '닉네임은 2~12자여야 합니다.'
+                    : value.length < 2 || value.length > 20
+                        ? '닉네임은 2~20자여야 합니다.'
                         : '';
             case 'email':
                 return value && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)
                     ? '유효한 이메일 형식이 아닙니다.'
                     : '';
             case 'phone':
-                return value && !/^\d{10,11}$/.test(value.replace(/-/g, ''))
+                return value && /^\d{2,3}-\d{3,4}-\d{4}$/.test(value.replace(/-/g, ''))
                     ? '유효한 전화번호를 입력해주세요.'
                     : '';
             case 'zipcode':
