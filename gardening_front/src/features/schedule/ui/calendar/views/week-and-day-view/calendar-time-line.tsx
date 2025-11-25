@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
-import { formatTime } from "@/features/schedule/ui/calendar/helpers.ts";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
+import { formatTime } from "@/features/schedule/lib/helpers.ts";
 
 export function CalendarTimeline() {
 	const { use24HourFormat } = useCalendar();

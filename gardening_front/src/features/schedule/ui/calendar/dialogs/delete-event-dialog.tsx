@@ -11,7 +11,7 @@ import {
     AlertDialogTrigger,
 } from "@/shared/shadcn/components/ui/alert-dialog.tsx";
 import {Button, buttonVariants} from "@/shared/shadcn/components/ui/button.tsx";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 
 interface DeleteEventDialogProps {
     eventId: number;
@@ -23,9 +23,9 @@ export default function DeleteEventDialog({eventId}: DeleteEventDialogProps) {
     const deleteEvent = () => {
         try {
             removeEvent(eventId);
-            toast.success("Event deleted successfully.");
+            toast.success("일정이 삭제되었습니다");
         } catch {
-            toast.error("Error deleting event.");
+            toast.error("일정 삭제에 실패했습니다");
         }
     };
 

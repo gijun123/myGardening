@@ -162,6 +162,7 @@ const mockGenerator = (numberOfEvents: number): IEvent[] => {
         });
     }
 
+    console.log(result);
     return result;
 };
 

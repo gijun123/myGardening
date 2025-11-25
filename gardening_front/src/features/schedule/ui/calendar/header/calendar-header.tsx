@@ -11,7 +11,7 @@ import {
 	slideFromRight,
 	transition,
 } from "@/features/schedule/ui/calendar/animations.ts";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import { AddEditEventDialog } from "@/features/schedule/ui/calendar/dialogs/add-edit-event-dialog.tsx";
 import { DateNavigator } from "@/features/schedule/ui/calendar/header/date-navigator.tsx";
 import FilterEvents from "@/features/schedule/ui/calendar/header/filter.tsx";

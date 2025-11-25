@@ -13,7 +13,7 @@ import { Resizable, type ResizeCallback } from "re-resizable";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { cn } from "@/shared/shadcn/lib/utils.ts";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 
 import type { IEvent } from "@/entities/schedule/calendar/interfaces.ts";
 

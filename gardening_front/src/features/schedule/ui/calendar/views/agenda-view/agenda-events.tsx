@@ -10,7 +10,7 @@ import {
     CommandList,
 } from "@/shared/shadcn/components/ui/command.tsx";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import {EventDetailsDialog} from "@/features/schedule/ui/calendar/dialogs/event-details-dialog.tsx";
 import {
     formatTime,
@@ -18,7 +18,7 @@ import {
     getColorClass, getEventsForMonth,
     getFirstLetters,
     toCapitalize,
-} from "@/features/schedule/ui/calendar/helpers.ts";
+} from "@/features/schedule/lib/helpers.ts";
 import {EventBullet} from "@/features/schedule/ui/calendar/views/month-view/event-bullet.tsx";
 import {COLORS_KO} from "@/entities/schedule/calendar/constants.ts";
 import {ko} from "date-fns/locale/ko";
@@ -69,7 +69,7 @@ export const AgendaEvents: FC = () => {
                             >
                                 <EventDetailsDialog event={event}>
                                     <div className="w-full flex items-center justify-between gap-4">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-2 w-full">
                                             {badgeVariant === "dot" ? (
                                                 <EventBullet color={event.color}/>
                                             ) : (
@@ -80,7 +80,7 @@ export const AgendaEvents: FC = () => {
                                                     </AvatarFallback>
                                                 </Avatar>
                                             )}
-                                            <div className="flex flex-col">
+                                            <div className="flex flex-col w-full">
                                                 <p
                                                     className={cn({
                                                         "font-medium": badgeVariant === "dot",
@@ -89,7 +89,7 @@ export const AgendaEvents: FC = () => {
                                                 >
                                                     {event.title}
                                                 </p>
-                                                <p className="text-muted-foreground text-sm line-clamp-1 text-ellipsis md:text-clip w-1/3">
+                                                <p className="text-muted-foreground text-sm line-clamp-1 text-ellipsis md:text-clip w-2/3">
                                                     {event.description}
                                                 </p>
                                             </div>

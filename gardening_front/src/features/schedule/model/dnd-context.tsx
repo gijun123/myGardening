@@ -10,7 +10,7 @@ import React, {
 	useMemo,
 } from "react";
 import { toast } from "sonner";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import type { IEvent } from "@/entities/schedule/calendar/interfaces.ts";
 import { DndConfirmationDialog } from "@/features/schedule/ui/calendar/dialogs/dnd-confirmation-dialog.tsx";
 
@@ -170,9 +170,9 @@ export function DndProvider({
 					endDate: newEndDate.toISOString(),
 				};
 				updateEvent(updatedEvent);
-				toast.success("Event updated successfully");
+				toast.success("일정이 수정되었습니다");
 			} catch {
-				toast.error("Failed to update event");
+				toast.error("일정 수정에 실패하였습니다");
 			}
 		},
 		[updateEvent],

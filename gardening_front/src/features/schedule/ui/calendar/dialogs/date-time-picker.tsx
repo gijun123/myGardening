@@ -7,7 +7,7 @@ import {FormControl, FormItem, FormLabel, FormMessage,} from "@/shared/shadcn/co
 import {Popover, PopoverContent, PopoverTrigger,} from "@/shared/shadcn/components/ui/popover.tsx";
 import {ScrollArea, ScrollBar} from "@/shared/shadcn/components/ui/scroll-area.tsx";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import type {TEventFormData} from "@/entities/schedule/calendar/schemas.ts";
 import {ko} from "date-fns/locale/ko";
 
@@ -30,20 +30,31 @@ export function DateTimePicker({form, field}: DatePickerProps) {
         const newDate = new Date(currentDate);
 
         if (type === "hour") {
-            newDate.setHours(parseInt(value, 10));
+            // 12시간제에서는 1~12로 입력받음, 내부적으로 0~23로 변환
+            const hours = parseInt(value, 10);
+            if (!use24HourFormat) {
+                const isPM = newDate.getHours() >= 12;
+                newDate.setHours(hours % 12 + (isPM ? 12 : 0));
+            } else {
+                newDate.setHours(hours);
+            }
         } else if (type === "minute") {
             newDate.setMinutes(parseInt(value, 10));
         } else if (type === "ampm") {
-            const hours = newDate.getHours();
-            if (value === "AM" && hours >= 12) {
-                newDate.setHours(hours - 12);
-            } else if (value === "PM" && hours < 12) {
-                newDate.setHours(hours + 12);
+            if (!use24HourFormat) {
+                const hours = newDate.getHours();
+                if (value === "AM" && hours >= 12) {
+                    newDate.setHours(hours - 12);
+                } else if (value === "PM" && hours < 12) {
+                    newDate.setHours(hours + 12);
+                }
             }
+            // 24시간제에서는 AM/PM 버튼이 없으므로 아무것도 안 함
         }
 
         form.setValue(field.name, newDate);
     }
+
 
     return (
         <FormItem className="flex flex-col">
@@ -105,26 +116,30 @@ export function DateTimePicker({form, field}: DatePickerProps) {
                         <div className="flex flex-col sm:flex-row sm:h-[332px] divide-y sm:divide-y-0 sm:divide-x">
                             <ScrollArea className="w-64 sm:w-auto">
                                 <div className="flex sm:flex-col p-2">
-                                    {Array.from(
-                                        {length: use24HourFormat ? 24 : 12},
-                                        (_, i) => i,
-                                    ).map((hour) => (
-                                        <Button
-                                            key={hour}
-                                            size="icon"
-                                            variant={
-                                                field.value &&
-                                                field.value.getHours() % (use24HourFormat ? 24 : 12) ===
-                                                hour % (use24HourFormat ? 24 : 12)
-                                                    ? "default"
-                                                    : "ghost"
+                                    {Array.from({ length: use24HourFormat ? 24 : 12 }, (_, i) => i + (!use24HourFormat ? 1 : 0))
+                                        .map((hour12) => {
+                                            // 12시간제에서는 1~12 표시, 내부적으로 0~11 / 12~23로 변환
+                                            let hour24 = hour12 % 12;
+                                            if (!use24HourFormat && field.value?.getHours() >= 12) {
+                                                hour24 += 12; // PM이면 12~23로 변환
                                             }
-                                            className="sm:w-full shrink-0 aspect-square"
-                                            onClick={() => handleTimeChange("hour", hour.toString())}
-                                        >
-                                            {hour.toString().padStart(2, "0")}
-                                        </Button>
-                                    ))}
+
+                                            const isSelected =
+                                                field.value &&
+                                                field.value.getHours() === hour24;
+
+                                            return (
+                                                <Button
+                                                    key={hour12}
+                                                    size="icon"
+                                                    variant={isSelected ? "default" : "ghost"}
+                                                    className="sm:w-full shrink-0 aspect-square"
+                                                    onClick={() => handleTimeChange("hour", hour24.toString())}
+                                                >
+                                                    {hour12.toString().padStart(2, "0")}
+                                                </Button>
+                                            );
+                                        })}
                                 </div>
                                 <ScrollBar orientation="horizontal" className="sm:hidden"/>
                             </ScrollArea>

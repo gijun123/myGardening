@@ -7,7 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/shared/shadcn/components/ui/select.tsx";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 
 export function UserSelect() {
 	const { users, selectedUserId, filterEventsBySelectedUser } = useCalendar();

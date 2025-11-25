@@ -2,11 +2,11 @@ import {format, isWithinInterval, parseISO} from "date-fns";
 import {Clock} from "lucide-react";
 import {useEffect, useRef} from "react";
 import {ScrollArea} from "@/shared/shadcn/components/ui/scroll-area.tsx";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 
 import {AddEditEventDialog} from "@/features/schedule/ui/calendar/dialogs/add-edit-event-dialog.tsx";
 import {DroppableArea} from "@/features/schedule/ui/calendar/dnd/droppable-area.tsx";
-import {groupEvents} from "@/features/schedule/ui/calendar/helpers.ts";
+import {groupEvents} from "@/features/schedule/lib/helpers.ts";
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
 import {CalendarTimeline} from "@/features/schedule/ui/calendar/views/week-and-day-view/calendar-time-line.tsx";
 import {

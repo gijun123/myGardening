@@ -4,6 +4,7 @@ import {CommonRoutes} from '@/app/router/index.js';
 import {useEffect} from "react";
 import {getStoredTokens} from "@/entities/auth/api.ts";
 import {type AuthState, useAuthStore} from "@/entities/auth/useAuthStore.tsx";
+import {Toaster} from "sonner";
 
 function App() {
     //기본 로그인
@@ -18,6 +19,7 @@ function App() {
 
     return (
         <BrowserRouter>
+            <Toaster/>
             <Header/>
             <CommonRoutes/>
         </BrowserRouter>

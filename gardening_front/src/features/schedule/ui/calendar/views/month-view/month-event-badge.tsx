@@ -2,12 +2,12 @@ import type {VariantProps} from "class-variance-authority";
 import {cva} from "class-variance-authority";
 import {endOfDay, isSameDay, parseISO, startOfDay} from "date-fns";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import {EventDetailsDialog} from "@/features/schedule/ui/calendar/dialogs/event-details-dialog.tsx";
 import {DraggableEvent} from "@/features/schedule/ui/calendar/dnd/draggable-event.tsx";
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
 import {EventBullet} from "@/features/schedule/ui/calendar/views/month-view/event-bullet.tsx";
-import {formatTime} from "@/features/schedule/ui/calendar/helpers.ts";
+import {formatTime} from "@/features/schedule/lib/helpers.ts";
 
 const eventBadgeVariants = cva(
     "mx-1 flex size-auto h-6.5 select-none items-center justify-between gap-1.5 truncate whitespace-nowrap rounded-md border px-2 text-xs",

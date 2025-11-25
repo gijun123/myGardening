@@ -1,9 +1,9 @@
 import {motion} from "framer-motion";
 import {useMemo} from "react";
 import {staggerContainer, transition,} from "@/features/schedule/ui/calendar/animations.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 
-import {calculateMonthEventPositions, getCalendarCells,} from "@/features/schedule/ui/calendar/helpers.ts";
+import {calculateMonthEventPositions, getCalendarCells,} from "@/features/schedule/lib/helpers.ts";
 
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
 import {DayCell} from "@/features/schedule/ui/calendar/views/month-view/day-cell.tsx";

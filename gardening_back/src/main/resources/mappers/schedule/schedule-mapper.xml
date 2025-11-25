@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="Schedule">
+<mapper namespace="com.ggirick.gardening_back.mappers.schedule.ScheduleMapper">
     <select id="getScheduleList" resultType="com.ggirick.gardening_back.dto.schedule.CalendarDTO">
         SELECT *
         FROM calendar
@@ -24,6 +24,7 @@
             user_uid,
             color,
             recurrence,
+            recurrence_id,
             recurrence_end,
             start_date,
             end_date,
@@ -36,11 +37,15 @@
             #{userUid},
             #{color},
             #{recurrence},
-            #{recurrenceEnd},
+            #{recurrenceId, jdbcType = INTEGER},
+            #{recurrenceEnd, jdbcType = TIMESTAMP},
             #{startDate},
             #{endDate},
             SYSDATE
         )
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT calendar_seq.currval FROM dual
+        </selectKey>
     </insert>
 
     <delete id="deleteById">
@@ -54,9 +59,9 @@
             description = #{description},
             color = #{color},
             recurrence = #{recurrence},
-            recurrence_end = #{recurrenceEnd},
+            recurrence_end = #{recurrenceEnd, jdbcType = TIMESTAMP},
             start_date = #{startDate},
-            end_date = #{endDate},
+            end_date = #{endDate}
         WHERE id = #{id}
     </update>
 </mapper>
