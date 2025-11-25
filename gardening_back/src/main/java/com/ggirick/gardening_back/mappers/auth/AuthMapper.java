@@ -17,6 +17,7 @@ public interface AuthMapper {
     // Provider로 인증 정보 조회
     AuthDTO selectAuthByProvider(@Param("provider") String provider, @Param("providerUserId") String providerUserid);
 
+
     //  로그인 기록 삽입
     int insertLoginHistory(LoginHistoryDTO history);
 

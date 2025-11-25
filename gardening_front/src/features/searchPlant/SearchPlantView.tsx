@@ -5,6 +5,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Loader2, Leaf, XCircle, Info, Sun, Thermometer, Droplet, Layers, Zap } from 'lucide-react';
 import Lottie from "lottie-react";
 import sprout from "../../../public/assets/lottie/PlantLoading.json";
+import {TypingAnimation} from "@/shared/shadcn/components/ui/typing-animation.tsx";
+
 interface Props {
     filePreview?: string;
     files?: File[];
@@ -21,6 +23,8 @@ interface Props {
 
 
 export function SproutLottieLoader({ text = '서버 분석 중...' }) {
+
+
     return (
         <div className="flex flex-col items-center justify-center">
             {/* Lottie 애니메이션 */}
@@ -33,10 +37,21 @@ export function SproutLottieLoader({ text = '서버 분석 중...' }) {
 }
 
 export const PlantDetailDisplay = ({ detail }: { detail: PlantDetail }) => (
+
+
+
     <div className="mt-8 pt-4 border-t border-green-200 dark:border-green-800 w-full">
         <h3 className="text-xl font-bold text-green-700 dark:text-green-300 mb-4">
-            ✅ 식물 분석 결과: {detail.commonName}
+            🌸 식물 분석 결과: {detail.commonName}
         </h3>
+        {detail.sampleImageUrl &&
+            <img
+                className="w-full pt-2"
+                src={detail.sampleImageUrl}
+                alt="Sample Image"
+            />
+        }
+
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 italic">
             (학명: *{detail.scientificName}*, {detail.family})
         </p>
@@ -44,37 +59,83 @@ export const PlantDetailDisplay = ({ detail }: { detail: PlantDetail }) => (
             <AccordionItem value="item-1">
                 <AccordionTrigger><Info className="mr-2 h-4 w-4 text-green-500" />기본 정보 및 특징</AccordionTrigger>
                 <AccordionContent className="space-y-2">
-                    <p>원산지: {detail.origin}</p>
-                    <p>환경 적응: {detail.environment}</p>
-                    <p>특징: {detail.description}</p>
+                    <TypingAnimation
+                        words={[
+                            `원산지: ${detail.origin}\n\n환경 적응: ${detail.environment}\n\n특징: ${detail.description}`
+                        ]}
+                        typeSpeed={50}
+                        deleteSpeed={50}
+                        loop={false}
+                        className="whitespace-pre-line"
+
+                    />
                 </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
                 <AccordionTrigger><Sun className="mr-2 h-4 w-4 text-amber-500" />광량</AccordionTrigger>
-                <AccordionContent>{detail.light}</AccordionContent>
+                <AccordionContent>
+                    <TypingAnimation
+                        words={[detail.light]}
+                        typeSpeed={50}
+                        deleteSpeed={50}
+                        loop={false}
+                    />
+                </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
                 <AccordionTrigger><Thermometer className="mr-2 h-4 w-4 text-red-500" />온도/습도</AccordionTrigger>
-                <AccordionContent>{detail.temperatureHumidity}</AccordionContent>
+                <AccordionContent>
+                    <TypingAnimation
+                        words={[detail.temperatureHumidity]}
+                        typeSpeed={50}
+                        deleteSpeed={50}
+                        loop={false}
+                        className="whitespace-pre-line"
+
+                    />
+                    </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-4">
                 <AccordionTrigger><Droplet className="mr-2 h-4 w-4 text-blue-500" />물주기</AccordionTrigger>
-                <AccordionContent>{detail.watering}</AccordionContent>
+                <AccordionContent><TypingAnimation
+                    words={[detail.watering]}
+                    typeSpeed={50}
+                    deleteSpeed={50}
+                    loop={false}
+                    className="whitespace-pre-line"
+
+                /></AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-5">
                 <AccordionTrigger><Layers className="mr-2 h-4 w-4 text-yellow-800" />토양/비료</AccordionTrigger>
                 <AccordionContent className="space-y-2">
-                    <p>토양: {detail.soil}</p>
-                    <p>비료: {detail.fertilizer}</p>
+
+                    <TypingAnimation
+                        words={[
+                            `토양: ${detail.soil}\n\n비료: ${detail.fertilizer}`
+                        ]}
+                        typeSpeed={50}
+                        deleteSpeed={50}
+                        loop={false}
+                        className="whitespace-pre-line"
+
+                    />
                 </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-6">
                 <AccordionTrigger><Zap className="mr-2 h-4 w-4 text-purple-600" />번식/관리</AccordionTrigger>
                 <AccordionContent className="space-y-2">
-                    <p>분갈이: {detail.potRepot}</p>
-                    <p>번식: {detail.propagation}</p>
-                    <p>병충해/팁: {detail.pestsTips}</p>
-                    <p>용도: {detail.commonUses}</p>
+
+                    <TypingAnimation
+                        words={[
+                            `분갈이: ${detail.potRepot}\n\n번식: ${detail.propagation} \n\n병충해/팁: ${detail.pestsTips}\n\n용도: ${detail.commonUses}`
+                        ]}
+                        typeSpeed={50}
+                        deleteSpeed={50}
+                        loop={false}
+                        className="whitespace-pre-line"
+
+                    />
                 </AccordionContent>
             </AccordionItem>
         </Accordion>

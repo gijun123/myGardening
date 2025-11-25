@@ -202,6 +202,7 @@ public class AuthController {
         System.out.println(userTokenDTO.getUid());
         try {
             UserInfoDTO info =  userService.getUserInfo(userTokenDTO.getUid());
+
             return ResponseEntity.ok(info);
         } catch (IllegalArgumentException e) {
             return ResponseEntity
