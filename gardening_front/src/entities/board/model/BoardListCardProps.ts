@@ -1,20 +1,20 @@
-interface BoardListCardProps {
-    image: string; // 대표 이미지 1장
+export interface BoardListCardProps {
+    id: number;
+
+    thumbnail?: string;
 
     title: string;
-    content: string;
+    contents: string;
 
-    // 작성자 정보
-    authorProfile?: string;
-    authorNickname: string;
-    authorBio: string;
+    writerProfileImage?: string;
+    writerNickname: string;
+    writerBio?: string;
 
-    likeCount: number;
-    viewCount: number;
-    commentCount: number;
+    likeCount?: number;
+    viewCount?: number;
+    commentCount?: number;
 
-    tag?: string;
-    // onClick?: () => void;
+    tags?: string[];
+
+    onClick?: (id: number) => void;
 }
-
-export type { BoardListCardProps };

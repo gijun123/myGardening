@@ -16,6 +16,9 @@ public interface BoardMapper {
             @Param("limit") int limit
     );
 
+    // 좋아요 Top3 게시물 조회
+    List<BoardResponseDTO> getTop3List();
+
     // 상세 조회
     BoardResponseDTO getDetailById(int id);
 

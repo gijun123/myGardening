@@ -3,25 +3,28 @@
 import { cn } from "@/shared/shadcn/lib/utils";
 import { Eye, MessageCircle, Heart } from "lucide-react";
 import { useState } from "react";
-import type { BoardListCardProps } from "../model/BoardListCardProps";
+import type { BoardListCardProps } from "@/entities/board/model/BoardListCardProps.ts";
 
 const BoardListCard = ({
-                           image,
+                           id,
                            title,
-                           content,
-                           authorProfile,
-                           authorNickname,
-                           authorBio,
-                           likeCount,
+                           contents,
+                           thumbnail,
+                           writerProfileImage,
+                           writerNickname,
+                           writerBio,
                            viewCount,
+                           likeCount,
                            commentCount,
-                           tag,
+                           tags,
+                           onClick        // 이벤트 받아오기
                        }: BoardListCardProps) => {
 
     const [hover, setHover] = useState(false);
 
     return (
         <div
+            onClick={() => onClick?.(id)}   // ← id 전달해서 사용
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             className={cn(
@@ -32,16 +35,16 @@ const BoardListCard = ({
             <div className="relative h-[55%] w-full">
 
                 <img
-                    src={image}
+                    src={thumbnail}
                     className="object-cover w-full h-full"
                     alt="thumbnail"
                 />
 
                 {/* 태그 */}
-                {tag && (
+                {tags && tags.length > 0 && (
                     <div className="absolute left-2 top-2 z-20">
                         <span className="px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full shadow-sm">
-                            {tag}
+                            {tags[0]}
                         </span>
                     </div>
                 )}
@@ -52,7 +55,7 @@ const BoardListCard = ({
                     <span className="font-medium">{likeCount}</span>
                 </div>
 
-                {/* Hover Overlay (이미지 영역만) */}
+                {/* Hover Overlay */}
                 <div
                     className={cn(
                         "absolute inset-0 bg-black/40 flex items-center justify-center gap-6 text-white transition-all duration-200 z-10",
@@ -79,18 +82,17 @@ const BoardListCard = ({
                     {title}
                 </h3>
 
-
                 {/* 내용 */}
                 <p className="text-sm text-gray-600 line-clamp-2 mt-2 leading-loose">
-                    {content}
+                    {contents}
                 </p>
 
-                {/* 프로필 (맨 아래) */}
+                {/* 프로필 */}
                 <div className="flex items-center gap-3 mt-auto">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
-                        {authorProfile && (
+                        {writerProfileImage && (
                             <img
-                                src={authorProfile}
+                                src={writerProfileImage}
                                 className="object-cover w-full h-full"
                                 alt="profile"
                             />
@@ -98,8 +100,8 @@ const BoardListCard = ({
                     </div>
 
                     <div className="flex flex-col leading-tight">
-                        <span className="font-semibold text-sm">{authorNickname}</span>
-                        <span className="text-xs text-gray-500">@{authorBio}</span>
+                        <span className="font-semibold text-sm">{writerNickname}</span>
+                        <span className="text-xs text-gray-500">@{writerBio}</span>
                     </div>
                 </div>
 

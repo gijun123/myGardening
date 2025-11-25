@@ -11,6 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(
+        name = "BoardCommentResponseDTO",
+        requiredProperties = { "id", "boardId", "contents",
+                "writerUid", "writerNickname", "createdAt",
+                "updatedAt", "createdAtFormatted", "status" }
+)
 public class BoardCommentResponseDTO {
     @Schema(description = "글 번호", example = "1")
     private int boardId;

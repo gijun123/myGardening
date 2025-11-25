@@ -2,7 +2,7 @@ import {Route, Routes} from "react-router-dom";
 import {lazy} from "react";
 import {ProtectedRoute} from "@/app/router/ProtectedRoute.tsx";
 
-const BoardPage = lazy(() => import("@/pages/board/BoardPage"));
+const BoardPage = lazy(() => import("@/pages/board/BoardListPage"));
 const DetailBoard = lazy(() => import("@/pages/board/DetailBoard"));
 const WriteBoard = lazy(() => import("@/pages/board/WriteBoard"));
 

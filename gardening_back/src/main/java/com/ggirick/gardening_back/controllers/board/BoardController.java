@@ -50,6 +50,29 @@ public class BoardController {
         return ResponseEntity.ok(boardService.getListByCursor(cursorId, limit, loginUid));
     }
 
+    // 좋아요 Top3 게시글 목록 조회
+    @Operation(
+            summary = "좋아요 Top3 게시글 목록 조회",
+            description = "좋아요 수 기준으로 상위 3개 게시물을 조회한다. 로그인 사용자 있을 경우 좋아요/북마크 여부 포함."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "목록 조회 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = BoardResponseDTO.class))
+                    )
+            )
+    })
+    @GetMapping("/top3")
+    public ResponseEntity<List<BoardResponseDTO>> getTop3List(
+            @AuthenticationPrincipal UserTokenDTO userInfo
+    ) {
+        String loginUid = (userInfo != null) ? userInfo.getUid() : null;
+        return ResponseEntity.ok(boardService.getTop3List(loginUid));
+    }
+
     // 2. 상세 조회
     @Operation(
             summary = "게시글 상세 조회",
@@ -125,7 +148,7 @@ public class BoardController {
             @ApiResponse(responseCode = "404", description = "게시글 없음")
     })
     @PutMapping(consumes = "multipart/form-data")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<Void> updateBoard(
             @AuthenticationPrincipal UserTokenDTO userInfo,
             @RequestPart("boardInfo") BoardRequestDTO dto,
             @RequestPart(value = "newFiles", required = false) List<MultipartFile> newFiles
@@ -144,7 +167,7 @@ public class BoardController {
     )
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> deleteBoard(@PathVariable int id) {
 
         int deleted = boardService.delete(id);
         if (deleted == 0) return ResponseEntity.notFound().build();

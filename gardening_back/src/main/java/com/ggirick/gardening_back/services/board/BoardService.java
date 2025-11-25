@@ -1,9 +1,6 @@
 package com.ggirick.gardening_back.services.board;
 
-import com.ggirick.gardening_back.dto.board.BoardDTO;
-import com.ggirick.gardening_back.dto.board.BoardFileDTO;
-import com.ggirick.gardening_back.dto.board.BoardRequestDTO;
-import com.ggirick.gardening_back.dto.board.BoardResponseDTO;
+import com.ggirick.gardening_back.dto.board.*;
 import com.ggirick.gardening_back.mappers.board.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +36,18 @@ public class BoardService {
         return list;
     }
 
+    // 좋아요 Top3 게시물 목록
+    public List<BoardResponseDTO> getTop3List(String loginUid) {
+        List<BoardResponseDTO> list = boardMapper.getTop3List();
+        if(loginUid != null) {
+            for(BoardResponseDTO dto : list) {
+                dto.setLiked(boardLikeService.isLiked(dto.getId(), loginUid));
+                dto.setBookmarked(boardBookmarkService.isBookmarked(dto.getId(), loginUid));
+            }
+        }
+        return list;
+    }
+
     // 상세 조회
     @Transactional
     public BoardResponseDTO getDetailById(int id, String loginUid) {
@@ -48,6 +57,16 @@ public class BoardService {
         // 게시글 조회
         BoardResponseDTO detail = boardMapper.getDetailById(id);
         if (detail == null) return null;
+
+        // 파일 추가
+        detail.setFiles(boardFileService.getFileListByBoardId(id));
+
+        // 태그 추가
+        detail.setTags(boardTagService.getTagsByBoardId(id)
+                .stream()
+                .map(BoardTagDTO::getName)
+                .toList()
+        );
 
         // 좋아요 / 북마크 여부 추가
         if (loginUid != null) {

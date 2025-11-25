@@ -1,17 +1,18 @@
-interface BoardNoImageCardProps {
+export interface BoardNoImageCardProps {
+    id: number;
+
     title: string;
-    content: string;
+    contents: string;
 
-    // 작성자 정보
-    authorProfile?: string;
-    authorNickname: string;
-    authorBio: string;
+    writerProfileImage?: string;
+    writerNickname: string;
+    writerBio?: string;
 
-    likeCount: number;
-    viewCount: number;
-    commentCount: number;
+    likeCount?: number;
+    viewCount?: number;
+    commentCount?: number;
 
-    tag?: string;
+    tags?: string[];
+
+    onClick?: (id: number) => void;
 }
-
-export type { BoardNoImageCardProps };

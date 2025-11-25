@@ -1,13 +1,16 @@
 import { BoardListCard } from "@/entities/board/ui/BoardListCard";
 import { BoardNoImageCard } from "@/entities/board/ui/BoardNoImageCard";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import {BoardControllerApi, type BoardResponseDTO} from "@/shared/api";
+import { useNavigate } from "react-router-dom";
 
-export default function BoardPage() {
-    const [boards] = useState([
+export default function BoardListPage() {
+    const navigate = useNavigate();
+    const [boards, setBoards] = useState<BoardResponseDTO[]>([
         {
             id: 1,
             title: "우리집 몬스테라 성장일기",
-            content: "드디어 새 잎이 나왔어요!" +
+            contents: "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
@@ -24,7 +27,7 @@ export default function BoardPage() {
         {
             id: 2,
             title: "초보자 식물 추천해주세요!",
-            content: "키우기 쉬운 식물 추천 부탁드려요 🌱" +
+            contents: "키우기 쉬운 식물 추천 부탁드려요 🌱" +
                 "키우기 쉬운 식물 추천 부탁드려요 🌱" +
                 "키우기 쉬운 식물 추천 부탁드려요 🌱" +
                 "키우기 쉬운 식물 추천 부탁드려요 🌱" +
@@ -40,7 +43,7 @@ export default function BoardPage() {
         {
             id: 3,
             title: "오늘은 물 주는 날",
-            content: "다육이들이 엄청 건강해졌어요." +
+            contents: "다육이들이 엄청 건강해졌어요." +
                 "다육이들이 엄청 건강해졌어요." +
                 "다육이들이 엄청 건강해졌어요." +
                 "다육이들이 엄청 건강해졌어요." +
@@ -56,7 +59,7 @@ export default function BoardPage() {
         {
             id: 4,
             title: "우리집 몬스테라 성장일기",
-            content: "드디어 새 잎이 나왔어요!" +
+            contents: "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
@@ -73,52 +76,62 @@ export default function BoardPage() {
         {
             id: 5,
             title: "우리집 몬스테라 성장일기",
-            content: "드디어 새 잎이 나왔어요!" +
+            contents: "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "드디어 새 잎이 나왔어요!" +
                 "",
-            images: [
-                "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
-                "https://images.unsplash.com/photo-1526827826797-7b05204a22ef",
-                "https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea",
-            ],
+            thumbnail: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6",
             tags: ["실내식물", "야옹"],
         },
     ]);
+
+    // useEffect(() => {
+    //     // Top3 게시물
+    //     const board = new BoardControllerApi();
+    //     board.getTop3List().then((resp: { data: BoardResponseDTO[] })=> {
+    //         setBoards(resp.data);
+    //     })
+    // }, []);
+
+    const handleCardClick = (id: number) => {
+        navigate(`/board/${id}`);
+    };
 
     return (
         <main className="mx-auto h-full w-full max-w-5xl px-4 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-15 p-4">
                 {boards.map((item) =>
-                    item.images.length > 0 ? (
+                    item.thumbnail ? (
                         <BoardListCard
-                            key={item.id}
-                            image={item.images[0]}
+                            id={item.id}
+                            thumbnail={item.thumbnail}
                             title={item.title}
-                            content={item.content}
-                            authorProfile="프로필사진"
-                            authorNickname="닉네임"
-                            authorBio="자기소개"
-                            likeCount={100}
-                            viewCount={5210}
-                            commentCount={2132}
-                            tag={item.tags[0]}
+                            contents={item.contents}
+                            writerProfileImage={item.writerProfileImage}
+                            writerNickname={item.writerNickname}
+                            writerBio={item.writerBio}
+                            likeCount={item.likeCount}
+                            viewCount={item.viewCount}
+                            commentCount={item.commentCount}
+                            tags={item.tags}
+                            onClick={handleCardClick}
                         />
                     ) : (
                         <BoardNoImageCard
-                            key={item.id}
+                            id={item.id}
                             title={item.title}
-                            content={item.content}
-                            authorProfile="프로필사진"
-                            authorNickname="닉네임"
-                            authorBio="자기소개"
-                            likeCount={500}
-                            viewCount={100}
-                            commentCount={5210}
-                            tag={item.tags[0]}
+                            contents={item.contents}
+                            writerProfileImage={item.writerProfileImage}
+                            writerNickname={item.writerNickname}
+                            writerBio={item.writerBio}
+                            likeCount={item.likeCount}
+                            viewCount={item.viewCount}
+                            commentCount={item.commentCount}
+                            tags={item.tags}
+                            onClick={handleCardClick}
                         />
                     )
                 )}

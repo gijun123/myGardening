@@ -4,45 +4,129 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ggirick.gardening_back.mappers.board.BoardMapper">
 
-    <!-- 커서 기반 페이징 -->
+    <!-- 커서 기반 목록 -->
     <select id="getListByCursor" resultType="com.ggirick.gardening_back.dto.board.BoardResponseDTO">
         SELECT
-        b.*,
+        b.ID,
+        b.TITLE,
+        b.CONTENTS,
 
-        -- 댓글 개수
-        (SELECT COUNT(*)
-        FROM BOARD_COMMENT c
-        WHERE c.BOARD_ID = b.ID) AS commentCount,
+        -- 대표 이미지 1장 (thumbnail)
+        (
+        SELECT bf.FILE_URL
+        FROM BOARD_FILE bf
+        WHERE bf.BOARD_ID = b.ID
+        ORDER BY bf.ID
+        FETCH FIRST 1 ROW ONLY
+        ) AS thumbnail,
 
-        -- 내가 좋아요 눌렀는지 여부
-        CASE
-        WHEN EXISTS (
-        SELECT 1
-        FROM BOARD_LIKE l
-        WHERE l.BOARD_ID = b.ID
-        AND l.USER_UID = #{userUid}
-        )
-        THEN 1 ELSE 0
-        END AS isLiked
+        -- 태그 배열(JSON)
+        (
+        SELECT NVL(JSON_ARRAYAGG(t.NAME), '[]')
+        FROM BOARD_TAG_MAPPING m
+        JOIN BOARD_TAG t ON m.TAG_ID = t.ID
+        WHERE m.BOARD_ID = b.ID
+        ) AS tags,
 
-        FROM (
-        SELECT b.*
+        -- 댓글 수
+        (SELECT COUNT(*) FROM BOARD_COMMENT c WHERE c.BOARD_ID = b.ID) AS commentCount,
+
+        b.VIEW_COUNT AS viewCount,
+        b.LIKE_COUNT AS likeCount,
+        b.CREATED_AT,
+        b.UPDATED_AT,
+        b.IS_NOTIFICATION,
+
+        u.UID AS writerUid,
+        u.NICKNAME AS writerNickname,
+        u.PROFILE_IMAGE AS writerProfileImage,
+        u.BIO AS writerBio
+
         FROM BOARD b
+        JOIN USER_INFO u ON b.WRITER_UID = u.UID
         <where>
             <if test="cursorId != null">
                 AND b.ID &lt; #{cursorId}
             </if>
         </where>
         ORDER BY b.ID DESC
-        )
-        WHERE ROWNUM &lt;= #{limit}
+        FETCH FIRST #{limit} ROWS ONLY
+    </select>
+
+    <!-- 좋아요 순 TOP3 게시글 -->
+    <select id="getTop3List" resultType="com.ggirick.gardening_back.dto.board.BoardResponseDTO">
+        SELECT
+            b.ID,
+            b.TITLE,
+            b.CONTENTS,
+
+            -- 썸네일
+            (
+                SELECT bf.FILE_URL
+                FROM BOARD_FILE bf
+                WHERE bf.BOARD_ID = b.ID
+                ORDER BY bf.ID
+                    FETCH FIRST 1 ROW ONLY
+            ) AS thumbnail,
+
+            -- 태그 배열(JSON)
+            (
+                SELECT NVL(JSON_ARRAYAGG(t.NAME), '[]')
+                FROM BOARD_TAG_MAPPING m
+                         JOIN BOARD_TAG t ON m.TAG_ID = t.ID
+                WHERE m.BOARD_ID = b.ID
+            ) AS tags,
+
+            -- 댓글 수
+            (SELECT COUNT(*) FROM BOARD_COMMENT c WHERE c.BOARD_ID = b.ID) AS commentCount,
+
+            b.VIEW_COUNT AS viewCount,
+            b.LIKE_COUNT AS likeCount,
+            b.CREATED_AT,
+            b.UPDATED_AT,
+            b.IS_NOTIFICATION,
+
+            u.UID AS writerUid,
+            u.NICKNAME AS writerNickname,
+            u.PROFILE_IMAGE AS writerProfileImage,
+            u.BIO AS writerBio
+
+        FROM BOARD b
+                 JOIN USER_INFO u ON b.WRITER_UID = u.UID
+        ORDER BY b.LIKE_COUNT DESC, b.ID DESC
+            FETCH FIRST 3 ROWS ONLY
     </select>
 
     <!-- 상세 조회 -->
     <select id="getDetailById" resultType="com.ggirick.gardening_back.dto.board.BoardResponseDTO">
-        SELECT *
-        FROM BOARD
-        WHERE ID = #{id}
+        SELECT
+            b.ID,
+            b.TITLE,
+            b.CONTENTS,
+
+            -- 썸네일 1장
+            (
+                SELECT bf.FILE_URL
+                FROM BOARD_FILE bf
+                WHERE bf.BOARD_ID = b.ID
+                ORDER BY bf.ID
+                    FETCH FIRST 1 ROW ONLY
+            ) AS thumbnail,
+
+            b.VIEW_COUNT AS viewCount,
+            b.LIKE_COUNT AS likeCount,
+            b.CREATED_AT,
+            b.UPDATED_AT,
+            b.IS_NOTIFICATION,
+
+            u.UID AS writerUid,
+            u.NICKNAME AS writerNickname,
+            u.PROFILE_IMAGE AS writerProfileImage,
+            u.BIO AS writerBio
+
+        FROM BOARD b
+                 JOIN USER_INFO u ON b.WRITER_UID = u.UID
+        WHERE b.ID = #{id}
     </select>
 
     <!-- 공지사항 -->

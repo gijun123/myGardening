@@ -11,6 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(
+        name = "BoardResponseDTO",
+        requiredProperties = { "id", "title", "contents",
+                "writerUid", "writerNickname", "createdAt",
+                "updatedAt", "isNotification" }
+)
 public class BoardResponseDTO {
     // 목록 + 상세 공통
     @Schema(description = "글 번호", example = "1")
@@ -19,6 +25,8 @@ public class BoardResponseDTO {
     private String title;
     @Schema(description = "글 내용", example = "질문있습니다.")
     private String contents;
+    @Schema(description = "대표 이미지", example = "https://.../thumbnail.jpg.")
+    private String thumbnail;
 
     // 유저 정보
     @Schema(description = "작성자 아이디", example = "user001")
@@ -27,6 +35,8 @@ public class BoardResponseDTO {
     private String writerNickname;
     @Schema(description = "작성자 프로필", example = "https://.../profile.jpg")
     private String writerProfileImage;
+    @Schema(description = "작성자 자기소개", example = "식물덕후입니다.")
+    private String writerBio;
 
     // counts
     @Schema(description = "팔로워 수", example = "120")
@@ -37,7 +47,7 @@ public class BoardResponseDTO {
     @Schema(description = "조회수", example = "111")
     private int viewCount;
     @Schema(description = "추천수", example = "222")
-    private int likesCount;
+    private int likeCount;
     @Schema(description = "댓글수", example = "33")
     private int commentCount;
 
