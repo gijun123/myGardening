@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ggirick.gardening_back.mappers.schedule.ScheduleMapper">
+    <select id="getScheduleList" resultType="com.ggirick.gardening_back.dto.schedule.CalendarDTO">
+        SELECT *
+        FROM calendar
+        WHERE user_uid = #{userUid}
+    </select>
+
+    <select id="getUserUidById" resultType="String">
+        SELECT user_uid
+        FROM calendar
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertSchedule">
+        INSERT
+        INTO calendar(
+            id,
+            title,
+            description,
+            user_uid,
+            color,
+            recurrence,
+            recurrence_id,
+            recurrence_end,
+            start_date,
+            end_date,
+            created_at
+        )
+        VALUES (
+            calendar_seq.nextval,
+            #{title},
+            #{description},
+            #{userUid},
+            #{color},
+            #{recurrence},
+            #{recurrenceId, jdbcType = INTEGER},
+            #{recurrenceEnd, jdbcType = TIMESTAMP},
+            #{startDate},
+            #{endDate},
+            SYSDATE
+        )
+        <selectKey keyProperty="id" resultType="int" order="AFTER">
+            SELECT calendar_seq.currval FROM dual
+        </selectKey>
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM calendar WHERE id = #{id}
+    </delete>
+
+    <update id="updateById">
+        UPDATE calendar
+        SET
+            title = #{title},
+            description = #{description},
+            color = #{color},
+            recurrence = #{recurrence},
+            recurrence_end = #{recurrenceEnd, jdbcType = TIMESTAMP},
+            start_date = #{startDate},
+            end_date = #{endDate}
+        WHERE id = #{id}
+    </update>
+</mapper>
