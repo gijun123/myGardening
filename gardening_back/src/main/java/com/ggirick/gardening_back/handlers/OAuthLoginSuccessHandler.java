@@ -64,14 +64,22 @@ public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
             boolean isNewUser = Boolean.TRUE.equals(httpSession.getAttribute("isNewUser"));
 
             String redirectUrl;
+
+            String clientOrigin = request.getHeader("Origin");
+            if (clientOrigin == null) {
+                clientOrigin = request.getHeader("Referer");
+            }
+            if (clientOrigin == null) {
+                clientOrigin = "http://localhost:5173"; // fallback
+            }
+
+// 반드시 슬래시 추가
             if (isNewUser) {
-                // 프론트엔드의 추가 정보 입력 페이지
-                redirectUrl = "http://10.5.5.1:5173/oauth/redirect?uid=" + auth.getUserUid()
+                redirectUrl = clientOrigin + "oauth/redirect?uid=" + auth.getUserUid()
                         + "&accessToken=" + tokenPair.getAccessToken()
                         + "&refreshToken=" + tokenPair.getRefreshToken();
             } else {
-                // 기존 유저는 홈
-                redirectUrl = "http://10.5.5.1:5173/oauth/redirect?accessToken="
+                redirectUrl = clientOrigin + "oauth/redirect?accessToken="
                         + tokenPair.getAccessToken()
                         + "&refreshToken=" + tokenPair.getRefreshToken();
             }

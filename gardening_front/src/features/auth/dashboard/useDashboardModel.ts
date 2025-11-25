@@ -8,7 +8,7 @@ export default function useDashboardModel() {
   const refreshToken = useAuthStore((s:AuthState) => s.refreshToken);
   const setTokens = useAuthStore((s:AuthState) => s.setTokens);
   const storeLogout = useAuthStore((s:AuthState) => s.logout);
-    const [userInfo, setUserInfo] = useState<{ nickname?: string; profileUrl?: string }>({});
+    const [userInfo, setUserInfo] = useState<{ nickname?: string; profileUrl?: string,roles?:string[]; }>({});
   useEffect(() => {
     const { access, refresh } = getStoredTokens();
     if (access && refresh && !accessToken) {

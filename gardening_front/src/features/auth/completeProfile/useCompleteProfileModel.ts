@@ -1,9 +1,9 @@
 import {useEffect, useState} from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {completeProfile, getUserInfo} from '@/entities/auth/api';
+import {completeProfile, existPhoneCheck, getUserInfo} from '@/entities/auth/api';
 import type { FieldErrors} from '@/features/auth/completeProfile/types.ts';
 import { AxiosError } from 'axios';
-
+import {toInternationalPhone, toLocalPhone} from "@/shared/utils/phoneConfig.ts";
 export default function useCompleteProfileModel() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -19,6 +19,8 @@ export default function useCompleteProfileModel() {
   const [bio, setBio] = useState('');
   const [profileUrl, setProfileUrl] = useState('');
   const [birthDate, setBirthDate] = useState('');
+    const [phoneCheckMsg, setPhoneCheckMsg] = useState('');
+    const [phoneAvailable, setPhoneAvailable] = useState<boolean | null>(null); // null = 아직 모름
 
   const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<FieldErrors>({});
@@ -32,7 +34,7 @@ export default function useCompleteProfileModel() {
                 setName(data.name || '');
                 setNickname(data.nickname || '');
                 setEmail(data.email || '');
-                setPhone(data.phone || '');
+                setPhone(toLocalPhone(data.phone) || '');
                 setAddress(data.address || '');
                 setAddressDetail(data.addressDetail || '');
                 setZipcode(data.zipcode || '');
@@ -46,6 +48,41 @@ export default function useCompleteProfileModel() {
 
         fetchUser();
     }, [setName, setNickname, setEmail, setPhone, setAddress, setAddressDetail, setZipcode, setBio, setProfileUrl, setBirthDate]);
+
+    const handlePhoneBlur = async () => {
+        if (!phone) {
+            setPhoneCheckMsg('');
+            setPhoneAvailable(null);
+            return;
+        }
+
+        if (!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)) {
+            setPhoneAvailable(false);
+            setPhoneCheckMsg('전화번호는 하이픈 포함 10~11자리로 입력해주세요.');
+
+            return ;
+        }
+
+        try {
+            const dbphone = toInternationalPhone(phone);
+            console.log(dbphone)
+            const res = await existPhoneCheck(dbphone);
+            const msg = res?.message;
+
+            if (msg.includes('이미')) {
+                setPhoneAvailable(false);
+                setPhoneCheckMsg('이미 존재하는 핸드폰 번호입니다.');
+            } else {
+                setPhoneAvailable(true);
+                setPhoneCheckMsg('사용 가능한 핸드폰 번호입니다.');
+            }
+        } catch (e) {
+            setPhoneAvailable(null);
+            setPhoneCheckMsg('핸드폰 번호 검사 중 오류가 발생했습니다.');
+        }
+    };
+
+
 
     const validateField = (field: string, value: string) => {
         switch (field) {
@@ -100,7 +137,7 @@ export default function useCompleteProfileModel() {
                 name,
                 nickname,
                 email,
-                phone,
+                phone:toInternationalPhone(phone),
                 address,
                 addressDetail,
                 zipcode,
@@ -146,6 +183,9 @@ export default function useCompleteProfileModel() {
     loading,
       errors,
       setErrors,
+      phoneCheckMsg,
+      phoneAvailable,
     handleSubmit,
+      handlePhoneBlur,
   } as const;
 }

@@ -8,6 +8,7 @@ import com.ggirick.gardening_back.mappers.auth.AuthMapper;
 import com.ggirick.gardening_back.mappers.auth.UserMapper;
 import com.ggirick.gardening_back.mappers.auth.UserSessionMapper;
 import com.ggirick.gardening_back.utils.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,22 +20,23 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private JWTUtil jwtUtil;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
 
-    @Autowired
-    private UserSessionMapper userSessionMapper;
 
-    @Autowired
-    private AuthMapper authMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserMapper userMapper;
+
+    private final UserSessionMapper userSessionMapper;
+
+
+    private final AuthMapper authMapper;
+
+
+    private final UserMapper userMapper;
 
     /**
      * 로그인 처리: 사용자의 id,pw를 받아서 인증처리 후 AccessToken, Refresh Token을 발급합니다.
@@ -269,7 +271,6 @@ public class AuthService {
             // user_info 등록
             UserInfoDTO userInfoDTO = UserInfoDTO.builder()
                     .uuid(userUid)
-                    .phone(dto.getPhone())
                     .bio("자기소개를 수정해주세요")
                     .nickname(userMapper.randomUserNickName())
                     .build();
@@ -292,7 +293,35 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public void registerOAuthUser(UserInfoDTO infoDTO,AuthDTO authDTO) {
+        String userUid = UUID.randomUUID().toString();
 
+        authDTO.setUserUid(userUid);
+
+        authMapper.insertAuth(authDTO);
+        userMapper.insertUser(userUid);
+
+        UserInfoDTO info = UserInfoDTO.builder()
+                .uuid(userUid)
+
+                .bio("자기소개를 수정해주세요")
+                .nickname(userMapper.randomUserNickName())
+                .profileUrl(infoDTO.getProfileUrl())
+
+                .name(infoDTO.getName())
+                .nickname(infoDTO.getNickname())
+                .build();
+
+        userMapper.insertUserInfo(info);
+        //user_role. 등록
+        userMapper.insertUserRole(UserRoleDTO.builder()
+                .userUid(userUid)
+                .assignedBy("system")
+                .roleId(1)
+                .build());
+
+    }
 
 
 }
