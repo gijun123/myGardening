@@ -2,6 +2,7 @@ import { useState, } from 'react';
 import { register, existIdCheck ,existPhoneCheck } from '@/entities/auth/api';
 import { saveTokens } from '@/entities/auth/api';
 import { useAuthStore, type AuthState } from '@/entities/auth/useAuthStore';
+import {toInternationalPhone} from "@/shared/utils/phoneConfig.ts";
 
 export default function useRegisterModel() {
     const [id, setId] = useState('');
@@ -55,7 +56,7 @@ export default function useRegisterModel() {
             return;
         }
 
-        if (!/^\d{2,3}-?\d{3,4}-?\d{4}$/.test(phone)) {
+        if (!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)) {
             setPhoneAvailable(false);
             setPhoneCheckMsg('전화번호는 하이픈 포함 10~11자리로 입력해주세요.');
 
@@ -63,7 +64,9 @@ export default function useRegisterModel() {
         }
 
         try {
-            const res = await existPhoneCheck(phone);
+            const dbphone = toInternationalPhone(phone);
+            console.log(dbphone)
+            const res = await existPhoneCheck(dbphone);
             const msg = res?.message;
 
             if (msg.includes('이미')) {
@@ -131,7 +134,8 @@ export default function useRegisterModel() {
         setLoading(true);
 
         try {
-            const data = await register({ id, pw: password, phone });
+
+            const data = await register({ id, pw: password, phone: toInternationalPhone(phone) });
 
             if (data?.accessToken && data?.refreshToken) {
                 saveTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken });
