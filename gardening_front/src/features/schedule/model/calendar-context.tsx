@@ -1,10 +1,10 @@
 "use client";
 
-import type React from "react";
-import {createContext, useContext, useState} from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import {useLocalStorage} from "@/entities/schedule/calendar/hooks.ts";
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
 import type {TCalendarView, TEventColor,} from "@/entities/schedule/calendar/types.ts";
+import {type InsertCalendarDTO, type PatchCalendarDTO, ScheduleControllerApi} from "@/shared/api";
 
 interface ICalendarContext {
     selectedDate: Date;
@@ -39,6 +39,8 @@ const DEFAULT_SETTINGS: CalendarSettings = {
     use24HourFormat: true,
     agendaModeGroupBy: "date",
 };
+
+const scheduleApi = new ScheduleControllerApi();
 
 const CalendarContext = createContext({} as ICalendarContext);
 
@@ -80,6 +82,12 @@ export function CalendarProvider({
 
     const [allEvents, setAllEvents] = useState<IEvent[]>(events || []);
     const [filteredEvents, setFilteredEvents] = useState<IEvent[]>(events || []);
+
+    // 이벤트 props가 바뀌면 state 동기화
+    useEffect(() => {
+        setAllEvents(events);
+        setFilteredEvents(events);
+    }, [events]);
 
     const updateSettings = (newPartialSettings: Partial<CalendarSettings>) => {
         setSettings({
@@ -133,11 +141,25 @@ export function CalendarProvider({
         setSelectedDate(date);
     };
 
+    // 일정 추가
     const addEvent = (event: IEvent) => {
-        setAllEvents((prev) => [...prev, event]);
-        setFilteredEvents((prev) => [...prev, event]);
+        const insertScheduleInfo: InsertCalendarDTO = {
+            title: event.title,
+            description: event.description,
+            color: event.color,
+            recurrence: event.recurrence,
+            recurrenceEnd: event.recurrenceEnd,
+            startDate: event.startDate,
+            endDate: event.endDate
+        }
+        scheduleApi.insertSchedule(insertScheduleInfo).then((resp: { data: number }) => {
+            event.id = resp.data;
+            setAllEvents((prev) => [...prev, event]);
+            setFilteredEvents((prev) => [...prev, event]);
+        });
     };
 
+    // 일정 수정
     const updateEvent = (event: IEvent) => {
         const updated = {
             ...event,
@@ -145,15 +167,32 @@ export function CalendarProvider({
             endDate: new Date(event.endDate).toISOString(),
         };
 
-        setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
-        setFilteredEvents((prev) =>
-            prev.map((e) => (e.id === event.id ? updated : e)),
-        );
+        const updateScheduleInfo: PatchCalendarDTO = {
+            id: event.id,
+            title: event.title,
+            description: event.description,
+            color: event.color,
+            recurrenceId: event.recurrenceId,
+            recurrence: event.recurrence,
+            recurrenceEnd: event.recurrenceEnd,
+            startDate: new Date(event.startDate).toISOString(),
+            endDate: new Date(event.endDate).toISOString(),
+        }
+
+        scheduleApi.updateSchedule(updateScheduleInfo).then(() => {
+            setAllEvents((prev) => prev.map((e) => (e.id === event.id ? updated : e)));
+            setFilteredEvents((prev) =>
+                prev.map((e) => (e.id === event.id ? updated : e)),
+            );
+        });
     };
 
+    // 일정 삭제
     const removeEvent = (eventId: number) => {
-        setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
-        setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
+        scheduleApi.deleteSchedule(eventId).then(() => {
+            setAllEvents((prev) => prev.filter((e) => e.id !== eventId));
+            setFilteredEvents((prev) => prev.filter((e) => e.id !== eventId));
+        });
     };
 
     const clearFilter = () => {

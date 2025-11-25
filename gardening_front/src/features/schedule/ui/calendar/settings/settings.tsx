@@ -12,8 +12,8 @@ import {
     DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/shared/shadcn/components/ui/dropdown-menu.tsx";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
-import {useDragDrop} from "@/features/schedule/ui/calendar/contexts/dnd-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
+import {useDragDrop} from "@/features/schedule/model/dnd-context.tsx";
 import {IconSwitch} from "@/shared/shadcn/components/ui/icon-switch.tsx";
 import {Clock12, Clock24} from "@/shared/ui/ClockIcon.tsx";
 

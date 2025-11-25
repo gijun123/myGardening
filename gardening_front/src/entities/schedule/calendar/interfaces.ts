@@ -13,6 +13,9 @@ export interface IEvent {
 	title: string;
 	color: TEventColor;
 	description: string;
+    recurrenceId: number;
+    recurrence: number;
+    recurrenceEnd: string;
 }
 
 export interface ICalendarCell {

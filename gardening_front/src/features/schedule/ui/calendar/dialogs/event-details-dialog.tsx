@@ -14,9 +14,9 @@ import {
 	DialogTrigger,
 } from "@/shared/shadcn/components/ui/dialog.tsx";
 import { ScrollArea } from "@/shared/shadcn/components/ui/scroll-area.tsx";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import { AddEditEventDialog } from "@/features/schedule/ui/calendar/dialogs/add-edit-event-dialog.tsx";
-import { formatTime } from "@/features/schedule/ui/calendar/helpers.ts";
+import { formatTime } from "@/features/schedule/lib/helpers.ts";
 import type { IEvent } from "@/entities/schedule/calendar/interfaces.ts";
 import {ko} from "date-fns/locale/ko";
 import DeleteEventDialog from "@/features/schedule/ui/calendar/dialogs/delete-event-dialog.tsx";

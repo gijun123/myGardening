@@ -24,7 +24,7 @@ import {
     subWeeks,
     subYears,
 } from "date-fns";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import type {ICalendarCell, IEvent,} from "@/entities/schedule/calendar/interfaces.ts";
 import type {TCalendarView, TEventColor,} from "@/entities/schedule/calendar/types.ts";
 import {ko} from "date-fns/locale/ko";

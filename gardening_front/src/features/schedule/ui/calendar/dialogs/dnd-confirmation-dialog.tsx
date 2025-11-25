@@ -1,4 +1,4 @@
-import { useDragDrop } from "@/features/schedule/ui/calendar/contexts/dnd-context.tsx";
+import { useDragDrop } from "@/features/schedule/model/dnd-context.tsx";
 import { EventDropConfirmationDialog } from "./event-drop-confirmation-dialog.tsx";
 import { memo } from "react";
 

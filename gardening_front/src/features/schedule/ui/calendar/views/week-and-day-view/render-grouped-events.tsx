@@ -1,5 +1,5 @@
 import { areIntervalsOverlapping, parseISO } from "date-fns";
-import { getEventBlockStyle } from "@/features/schedule/ui/calendar/helpers.ts";
+import { getEventBlockStyle } from "@/features/schedule/lib/helpers.ts";
 import type { IEvent } from "@/entities/schedule/calendar/interfaces.ts";
 import { EventBlock } from "@/features/schedule/ui/calendar/views/week-and-day-view/event-block.tsx";
 

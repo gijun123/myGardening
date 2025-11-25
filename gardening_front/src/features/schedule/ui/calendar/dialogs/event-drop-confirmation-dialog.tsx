@@ -13,9 +13,9 @@ import {
     AlertDialogTitle,
 } from "@/shared/shadcn/components/ui/alert-dialog.tsx";
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
-import {formatTime, getColorClass} from "@/features/schedule/ui/calendar/helpers.ts";
+import {formatTime, getColorClass} from "@/features/schedule/lib/helpers.ts";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import {ko} from "date-fns/locale/ko";
 
 interface EventDropConfirmationDialogProps {

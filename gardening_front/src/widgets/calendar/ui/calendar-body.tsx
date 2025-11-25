@@ -3,7 +3,7 @@
 import { isSameDay, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { fadeIn, transition } from "@/features/schedule/ui/calendar/animations.ts";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import { AgendaEvents } from "@/features/schedule/ui/calendar/views/agenda-view/agenda-events.tsx";
 import { CalendarMonthView } from "@/features/schedule/ui/calendar/views/month-view/calendar-month-view.tsx";
 import { CalendarDayView } from "@/features/schedule/ui/calendar/views/week-and-day-view/calendar-day-view.tsx";

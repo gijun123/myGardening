@@ -3,7 +3,7 @@ import {AnimatePresence, motion} from "motion/react";
 import {Tabs, TabsList, TabsTrigger} from "@/shared/shadcn/components/ui/tabs.tsx";
 
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import {CalendarRange, Columns, Grid2X2, Grid3X3, List} from "lucide-react";
 import type {TCalendarView} from "../../../../../entities/schedule/calendar/types.ts";
 import {memo} from "react";

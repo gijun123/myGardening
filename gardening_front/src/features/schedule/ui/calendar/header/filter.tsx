@@ -7,7 +7,7 @@ import {
 } from "@/shared/shadcn/components/ui/dropdown-menu.tsx";
 import { Separator } from "@/shared/shadcn/components/ui/separator.tsx";
 import { Toggle } from "@/shared/shadcn/components/ui/toggle.tsx";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import {COLORS, COLORS_KO} from "@/entities/schedule/calendar/constants.ts";
 
 export default function FilterEvents() {

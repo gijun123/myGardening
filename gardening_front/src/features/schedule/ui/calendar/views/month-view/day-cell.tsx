@@ -9,7 +9,7 @@ import {cn} from "@/shared/shadcn/lib/utils.ts";
 import {transition,} from "@/features/schedule/ui/calendar/animations.ts";
 import {EventListDialog} from "@/features/schedule/ui/calendar/dialogs/events-list-dialog.tsx";
 import {DroppableArea} from "@/features/schedule/ui/calendar/dnd/droppable-area.tsx";
-import {getMonthCellEvents} from "@/features/schedule/ui/calendar/helpers.ts";
+import {getMonthCellEvents} from "@/features/schedule/lib/helpers.ts";
 import {useMediaQuery} from "@/entities/schedule/calendar/hooks.ts";
 import type {ICalendarCell, IEvent,} from "@/entities/schedule/calendar/interfaces.ts";
 import {EventBullet} from "@/features/schedule/ui/calendar/views/month-view/event-bullet.tsx";

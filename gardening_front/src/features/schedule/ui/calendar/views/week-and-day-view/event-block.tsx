@@ -3,11 +3,11 @@ import { cva } from "class-variance-authority";
 import { differenceInMinutes, parseISO } from "date-fns";
 import type { HTMLAttributes } from "react";
 import { cn } from "@/shared/shadcn/lib/utils.ts";
-import { useCalendar } from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
+import { useCalendar } from "@/features/schedule/model/calendar-context.tsx";
 import { EventDetailsDialog } from "@/features/schedule/ui/calendar/dialogs/event-details-dialog.tsx";
 import { DraggableEvent } from "@/features/schedule/ui/calendar/dnd/draggable-event.tsx";
 import { ResizableEvent } from "@/features/schedule/ui/calendar/dnd/resizable-event.tsx";
-import { formatTime } from "@/features/schedule/ui/calendar/helpers.ts";
+import { formatTime } from "@/features/schedule/lib/helpers.ts";
 import type { IEvent } from "@/entities/schedule/calendar/interfaces.ts";
 
 const calendarWeekEventCardVariants = cva(

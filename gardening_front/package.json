@@ -11,8 +11,8 @@
     "generate:api": "openapi-generator-cli generate -i http://localhost:8081/v3/api-docs -g typescript-axios -o src/shared/api -t src/shared/api/openapi-templates"
   },
   "dependencies": {
-    "@radix-ui/react-accordion": "^1.2.12",
     "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-avatar": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.15",

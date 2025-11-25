@@ -8,8 +8,8 @@ import {
     ModalTrigger,
 } from "@/shared/shadcn/components/ui/responsive-modal.tsx";
 import {cn} from "@/shared/shadcn/lib/utils.ts";
-import {useCalendar} from "@/features/schedule/ui/calendar/contexts/calendar-context.tsx";
-import {formatTime} from "@/features/schedule/ui/calendar/helpers.ts";
+import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
+import {formatTime} from "@/features/schedule/lib/helpers.ts";
 import type {IEvent} from "@/entities/schedule/calendar/interfaces.ts";
 import {dayCellVariants} from "@/features/schedule/ui/calendar/views/month-view/day-cell.tsx";
 import {EventBullet} from "@/features/schedule/ui/calendar/views/month-view/event-bullet.tsx";
