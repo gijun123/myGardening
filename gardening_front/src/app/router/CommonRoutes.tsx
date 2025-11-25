@@ -1,6 +1,7 @@
 import {Outlet, Route, Routes} from "react-router-dom";
 import {lazy, Suspense} from "react";
 import {ProtectedRoute} from "@/app/router/ProtectedRoute.tsx";
+import TerrariumEditPage from "@/pages/terrarium/TerrariumEditPage.tsx";
 
 const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
@@ -29,6 +30,7 @@ export function CommonRoutes() {
                     <Route path="/oauth/edit-complete-profile" element={<EditCompleteProfilePage />} />
                     <Route path="/plant-search" element={<SearchPlantPage />} />
                     <Route path="/schedule" element={<ScheduleRoutes />} />
+                    <Route path="/terrariumEdit" element={<TerrariumEditPage/>}/>
                 </Route>
             </Routes>
         </Suspense>

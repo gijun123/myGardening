@@ -1,6 +1,8 @@
 import {create} from "zustand";
+import {TerrariumAssetImageControllerApi} from "@/shared/api";
 
 export type PanelType = "images"|"icons"|"myDesigns"|null;
+const assetApi = new TerrariumAssetImageControllerApi();
 
 export interface PanelItem{
     id: number | string;
@@ -19,6 +21,8 @@ interface PanelStore{
     open: () => void;
     close: () => void;
     toggle: () => void;
+
+    loadAssets: () => Promise<void>;
 }
 
 export const usePanelStore = create<PanelStore>((set, get) => ({
@@ -32,4 +36,18 @@ export const usePanelStore = create<PanelStore>((set, get) => ({
     open: () => set({ isOpen: true }),
     close: () => set({ isOpen: false }),
     toggle: () => set({ isOpen: !get().isOpen }),
+
+    loadAssets: async () => {
+        try {
+            const response = await assetApi.getAllAssets(); // axiosInterceptor가 자동으로 헤더 처리
+            const items = response.data.map((img) => ({
+                id: img.id!,
+                url: img.url!,
+                name: img.name || "",
+            }));
+            set({ items, panelType: "images", isOpen: true });
+        } catch (err) {
+            console.error("공용 이미지 로드 실패", err);
+        }
+    },
 }));

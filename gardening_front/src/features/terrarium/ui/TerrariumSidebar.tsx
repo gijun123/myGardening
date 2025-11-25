@@ -13,7 +13,8 @@ import {usePanelStore} from "@/features/terrarium/model/usePanelStore.ts";
 
 export function TerrariumSidebar() {
 
-    const {setPanelType,setItems,open} =usePanelStore();
+    const {loadAssets,setPanelType,setItems,open} =usePanelStore();
+
 
     const openMyDesigns = () => {
         setPanelType("myDesigns");
@@ -37,17 +38,9 @@ export function TerrariumSidebar() {
         open();
     };
 
-    const openImages = () => {
+    const openImages = async () => {
+        await loadAssets(); // DB에서 공용 이미지 가져오기
         setPanelType("images");
-
-        setItems([
-            { id: 1, url: "/assets/test/a.webp" },
-            { id: 2, url: "/assets/test/j.jpeg" },
-            { id: 3, url: "/assets/test/g.webp" },
-            { id: 4, url: "/assets/test/h.jfif" },
-            { id: 5, url: "/assets/test/d.webp" },
-        ]);
-
         open();
     };
 
@@ -72,7 +65,7 @@ export function TerrariumSidebar() {
                                     <SidebarMenuButton onClick={openIcons}>아이콘</SidebarMenuButton>
                                 </SidebarMenuItem>
                                 <SidebarMenuItem>
-                                    <SidebarMenuButton onClick={openImages}>이미지</SidebarMenuButton>
+                                    <SidebarMenuButton onClick={openImages}>공용 이미지</SidebarMenuButton>
                                 </SidebarMenuItem>
                             </SidebarMenu>
                         </SidebarGroupContent>

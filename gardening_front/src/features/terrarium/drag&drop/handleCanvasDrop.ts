@@ -1,16 +1,29 @@
-export function handleCanvasDrop(e: React.DragEvent, stageRef: any, addObject: any) {
+
+export function handleCanvasDrop(
+    e: React.DragEvent,
+    stageRef: React.RefObject<any>,
+    addObject: (obj: any) => void
+) {
     e.preventDefault();
     const url = e.dataTransfer.getData("image/url");
     if (!url) return;
 
-    const pos = stageRef.current.getPointerPosition() || { x: 0, y: 0 };
+    if (!stageRef.current) return;
+
+    const stage = stageRef.current;
+    const pointerPos = stage.getPointerPosition();
+    if (!pointerPos) return;
+
+    const x = pointerPos.x;
+    const y = pointerPos.y;
+
 
     addObject({
         id: `img-${Date.now()}`,
         type: "image",
         url,
-        x: pos.x,
-        y: pos.y,
+        x, // pointerPos.x 그대로 사용
+        y, // pointerPos.y 그대로 사용
         width: 120,
         height: 120,
     });
