@@ -18,7 +18,7 @@ import {
     ModalTrigger,
 } from "@/shared/shadcn/components/ui/responsive-modal.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/shared/shadcn/components/ui/select.tsx";
-import {Textarea} from "@/features/board/ui/textarea.tsx";
+import {Textarea} from "@/shared/shadcn/components/ui/textarea.tsx";
 import {COLORS, COLORS_KO} from "@/entities/schedule/calendar/constants.ts";
 import {useCalendar} from "@/features/schedule/model/calendar-context.tsx";
 import {useDisclosure} from "@/entities/schedule/calendar/hooks.ts";
