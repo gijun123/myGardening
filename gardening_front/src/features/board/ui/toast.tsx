@@ -12,8 +12,8 @@ import {
   X,
 } from 'lucide-react';
 
-import { Button } from '@/shared/shadcn/components/ui/button';
-import { cn } from '@/shared/shadcn/lib/utils';
+import { Button } from '@/shared/shadcn/components/ui/button.tsx';
+import { cn } from '@/shared/shadcn/lib/utils.ts';
 
 type Variant = 'default' | 'success' | 'error' | 'warning';
 type Position =

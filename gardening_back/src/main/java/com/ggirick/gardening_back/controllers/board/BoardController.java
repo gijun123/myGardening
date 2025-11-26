@@ -119,7 +119,7 @@ public class BoardController {
     // 4. 게시글 등록
     @Operation(
             summary = "게시글 등록",
-            description = "게시글 정보 + 파일(newFiles) 업로드 방식으로 등록한다."
+            description = "게시글 정보 + 파일(files) 업로드 방식으로 등록한다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "등록 성공"),
@@ -129,10 +129,10 @@ public class BoardController {
     public ResponseEntity<Void> insert(
             @AuthenticationPrincipal UserTokenDTO userInfo,
             @RequestPart("boardInfo") BoardRequestDTO dto,
-            @RequestPart(value = "newFiles", required = false) List<MultipartFile> newFiles
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) throws Exception {
 
-        boardService.insert(dto, newFiles, userInfo.getUid());
+        boardService.insert(dto, files, userInfo.getUid());
 
         // ✔ 성공 시 payload 없이 200 반환
         return ResponseEntity.ok().build();

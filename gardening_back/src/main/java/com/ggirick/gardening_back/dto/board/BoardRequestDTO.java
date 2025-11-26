@@ -28,7 +28,4 @@ public class BoardRequestDTO {
 
     @Schema(description = "수정시 이미지 ID 목록", example = "1,3,4")
     private List<Integer> keepFileIds; // 수정 시 유지할 이미지 ID 목록
-
-    @Schema(description = "등록시 이미지 url 목록", example = "https://cdn.ggirick.com/abc.jpg, https://cdn.ggirick.com/xyz.png")
-    private List<String> fileUrls;
 }
