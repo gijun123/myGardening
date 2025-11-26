@@ -1,7 +1,7 @@
 // demo.tsx
 
 
-import {type Attachment, ComposerInput} from "@/shared/shadcn/components/ui/composer-input"
+import {type Attachment, ComposerInput} from "@/features/board/ui/composer-input.tsx"
 import {toast} from "sonner"; // Adjust path as needed
 
 // Sample attachments for the demo
@@ -24,7 +24,7 @@ const sampleAttachments: Attachment[] = [
     }
 ];
 
-export default function ComposerInputDemo() {
+export default function WriterBoard() {
     const handleSend = (message: string, attachments: Attachment[]) => {
         // In a real app, this function would send the data to an API
         console.log("Sending message:", message)

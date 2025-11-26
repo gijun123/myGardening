@@ -19,15 +19,15 @@ import {
   X,
 } from "lucide-react"
 
-import { cn } from "@/shared/shadcn/lib/utils" // Your utility for merging class names
-import { Button } from "@/shared/shadcn/components/ui/button"
-import { Textarea } from "@/shared/shadcn/components/ui/textarea"
+import { cn } from "@/shared/shadcn/lib/utils.ts" // Your utility for merging class names
+import { Button } from "@/shared/shadcn/components/ui/button.tsx"
+import { Textarea } from "@/features/board/ui/textarea.tsx"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/shared/shadcn/components/ui/tooltip"
+} from "@/features/board/ui/tooltip.tsx"
 
 // Define the structure for an attachment
 export interface Attachment {
