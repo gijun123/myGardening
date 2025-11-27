@@ -9,4 +9,11 @@
         FROM TERRARIUM_ASSET_IMAGE
         ORDER BY ID ASC
     </select>
+
+    <insert id="insertImage" parameterType="com.ggirick.gardening_back.dto.terrarium.TerrariumImageDTO">
+    <selectKey order="BEFORE" keyProperty="seq" resultType="int">
+        select terrarium_image_seq.nextval from dual
+    </selectKey>
+        insert into terrarium_image values(#{id},#{terrariumId},#{oriName},#{sysName},#{url},default)
+    </insert>
 </mapper>

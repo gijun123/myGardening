@@ -1,4 +1,7 @@
 import {create} from "zustand";
+import {TerrariumImageControllerApi} from "@/shared/api";
+
+const imageApi = new TerrariumImageControllerApi();
 
 export interface TerrariumObject {
     id: string;
@@ -9,6 +12,10 @@ export interface TerrariumObject {
     type: "background" | "object" | "image";
     fill?: string;
     url?: string;
+    rotation?:number;
+    zIndex?:number;
+    sysName?:string;
+    oriName?:string;
 }
 
 interface CanvasStore {
@@ -17,7 +24,7 @@ interface CanvasStore {
     setSelectedId: (id: string | null) => void;
     setObjects: (objects: TerrariumObject[]) => void;
     addObject: (obj: TerrariumObject) => void;
-    saveCanvas: () => void;
+    saveCanvas: (terrariumId:number) => Promise<void>;
     loadCanvas: () => void;
     moveForward: (id: string) => void;
     moveBackward: (id: string) => void;
@@ -30,7 +37,19 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     setSelectedId: (id) => set({ selectedId: id }),
     setObjects: (objects) => set({ objects }),
     addObject: (obj) => set({ objects: [...get().objects, obj] }),
-    saveCanvas: () => localStorage.setItem("terrarium-canvas", JSON.stringify(get().objects)),
+    saveCanvas: async(terrariumId:number)=>{
+        const{objects}=get();
+        const imageObjects = objects.filter(o => o.type === "image");
+        for (const obj of imageObjects) {
+            if (!obj.url || !obj.oriName || !obj.sysName) continue;
+
+            try {
+                await imageApi.uploadImage(terrariumId);
+            } catch (err) {
+                console.error("이미지 저장 실패:", err);
+            }
+        }
+    },
     loadCanvas: () => {
         const json = localStorage.getItem("terrarium-canvas");
         if (!json) return;
