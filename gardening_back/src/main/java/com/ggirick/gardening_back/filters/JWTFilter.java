@@ -34,14 +34,14 @@ public class JWTFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getServletPath();
-
         if(path.startsWith("/auth/existIdCheck")
                 || path.startsWith("/auth/signup")
                 || path.startsWith("/auth/register")
                 || path.startsWith("/auth/refresh")
                 || path.startsWith("/oauth")
                 || path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")) {
+                || path.startsWith("/v3/api-docs")
+                ||path.startsWith("/oauth2/authorization/")) {
             filterChain.doFilter(request, response);
             return;
         }
