@@ -3,7 +3,7 @@
 
 @font-face {
     font-family: "Hakgyoansim";
-    src: url("src/shared/assets/fonts/Hakgyoansim Dunggeunmiso OTF R.otf") format("woff2");
+    src: url("/assets/fonts/Hakgyoansim Dunggeunmiso OTF R.otf") format("woff2");
     font-weight: 400;
     font-style: normal;
 }
