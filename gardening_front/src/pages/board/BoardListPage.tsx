@@ -103,6 +103,7 @@ export default function BoardListPage() {
     return (
         <main className="mx-auto h-full w-full max-w-5xl px-4 py-12">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-15 p-4">
+                <button onClick={() => navigate("write")}>작성</button>
                 {boards.map((item) =>
                     item.thumbnail ? (
                         <BoardListCard

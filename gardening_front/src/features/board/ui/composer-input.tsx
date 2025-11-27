@@ -1,10 +1,10 @@
 import * as React from "react"
-import { AnimatePresence, motion } from "framer-motion"
-import { Image as ImageIcon, X, CornerDownLeft } from "lucide-react"
-
-import { cn } from "@/shared/shadcn/lib/utils"
-import { Button } from "@/shared/shadcn/components/ui/button"
-import { Textarea } from "@/features/board/ui/textarea"
+import {useEffect} from "react"
+import {AnimatePresence, motion} from "framer-motion"
+import {CornerDownLeft, Image as ImageIcon, X} from "lucide-react"
+import {Button} from "@/shared/shadcn/components/ui/button"
+import {Textarea} from "@/features/board/ui/textarea"
+import {PlantTagControllerApi} from "@/shared/api";
 
 // uuid 대체용
 const simpleId = () => Math.random().toString(36).slice(2, 11)
@@ -13,29 +13,60 @@ export interface ComposerProps {
     onSend: (data: { title: string; content: string; tags: string[]; files: File[] }) => void
 }
 
-export function ComposerInput({ onSend }: ComposerProps) {
-    const [title, setTitle] = React.useState("")
-    const [content, setContent] = React.useState("")
-    const [tags, setTags] = React.useState<string[]>([])
-    const [tagInput, setTagInput] = React.useState("")
+export function ComposerInput({onSend}: ComposerProps) {
+    const [title, setTitle] = React.useState("") // 제목
+    const [content, setContent] = React.useState("") // 글내용
+    const [tags, setTags] = React.useState<string[]>([]) // 태그
+    const [tagInput, setTagInput] = React.useState("") // 태그 입력 값
     const [attachments, setAttachments] = React.useState<
         { id: string; file: File; preview?: string }[]
-    >([])
+    >([]) // 첨부 파일
 
     const fileInputRef = React.useRef<HTMLInputElement>(null)
 
+    // 파일 업로드 시 자동 태그 추천
+    useEffect(() => {
+        if (attachments.length === 0) return;
+
+        const fetchTags = async () => {
+            try {
+                const plantTag = new PlantTagControllerApi();
+
+                const res = await plantTag.recommendTags(
+                    attachments[0].file, "flower");
+
+                setTags(res.data);
+            } catch (err) {
+                console.error("추천 태그 불러오기 실패:", err);
+            }
+        };
+
+        fetchTags();
+    }, [attachments]);
+
+
+
     // 이미지 업로드 처리
     const handleFiles = (files: FileList | null) => {
-        if (!files) return
+        if (!files) return;
 
-        const list = Array.from(files).map((file) => ({
+        const incoming = Array.from(files);
+
+        // 이미지 최대 3장 제한
+        if (attachments.length + incoming.length > 3) {
+            alert("이미지는 최대 3장까지 업로드할 수 있습니다.");
+            return;
+        }
+
+        const list = incoming.map((file) => ({
             id: simpleId(),
             file,
             preview: URL.createObjectURL(file)
-        }))
+        }));
 
-        setAttachments((prev) => [...prev, ...list])
-    }
+        setAttachments((prev) => [...prev, ...list]);
+    };
+
 
     const removeAttachment = (id: string) => {
         setAttachments((prev) => prev.filter((a) => a.id !== id))
@@ -79,7 +110,7 @@ export function ComposerInput({ onSend }: ComposerProps) {
                     size="icon"
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <ImageIcon className="h-5 w-5" />
+                    <ImageIcon className="h-5 w-5"/>
                 </Button>
 
                 <input
@@ -114,10 +145,10 @@ export function ComposerInput({ onSend }: ComposerProps) {
                                 <motion.div
                                     key={att.id}
                                     layout
-                                    initial={{ opacity: 0, scale: 0.8 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.8 }}
-                                    transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                                    initial={{opacity: 0, scale: 0.8}}
+                                    animate={{opacity: 1, scale: 1}}
+                                    exit={{opacity: 0, scale: 0.8}}
+                                    transition={{type: "spring", stiffness: 260, damping: 22}}
                                     className="relative group"
                                 >
                                     <div className="aspect-square w-full rounded-md overflow-hidden bg-muted">
@@ -131,7 +162,7 @@ export function ComposerInput({ onSend }: ComposerProps) {
                                         onClick={() => removeAttachment(att.id)}
                                         className="absolute -top-1 -right-1 bg-background border rounded-full p-0.5 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
-                                        <X className="h-3 w-3" />
+                                        <X className="h-3 w-3"/>
                                     </button>
                                 </motion.div>
                             ))}
@@ -172,7 +203,7 @@ export function ComposerInput({ onSend }: ComposerProps) {
                 <div className="flex justify-end">
                     <Button onClick={sendHandler}>
                         작성하기
-                        <CornerDownLeft className="h-4 w-4 ml-2" />
+                        <CornerDownLeft className="h-4 w-4 ml-2"/>
                     </Button>
                 </div>
             </div>

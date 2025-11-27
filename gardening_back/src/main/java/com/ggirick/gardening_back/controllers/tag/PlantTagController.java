@@ -12,11 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,15 +33,23 @@ public class PlantTagController {
     // 이미지 분석해서 태그 추천
     @Operation(summary = "사진을 기반으로 식물을 추출합니다. 파일 업로드를 사용합니다.",
             description = "결과에 따라 다른 ResponseEntity를 반환한다. 식물이 인식된다면 식물 학명을 포함한 식물 정보를 PlantInfo 형태가 반환된다. ")
-    @PostMapping("/recommendTags")
-    public ResponseEntity<List<PlantTagDTO>> recommendTags(
+    @PostMapping(value = "/recommendTags", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<List<String>> recommendTags(
             @AuthenticationPrincipal UserTokenDTO userTokenDTO,
 
             @RequestPart(value = "file", required = true) MultipartFile file,
             @RequestParam(value = "organ", defaultValue = "flower") String organ) throws Exception{
 
         List<PlantTagDTO> list = plantTagService.getImagePlantTags(file, organ, userTokenDTO.getUid());
-        return ResponseEntity.ok(list);
+
+        List<String> tags = new ArrayList<>();
+
+        // 태그명만 반환
+        for(PlantTagDTO plantTagDTO : list ){
+            tags.add(plantTagDTO.getTagName());
+        }
+
+        return ResponseEntity.ok(tags);
     }
 
     // 학명 기반 태그 조회
