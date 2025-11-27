@@ -27,8 +27,18 @@ public class BoardService {
 
         List<BoardResponseDTO> list = boardMapper.getListByCursor(cursorId, limit);
 
-        if (loginUid != null) {
-            for (BoardResponseDTO dto : list) {
+        for (BoardResponseDTO dto : list) {
+
+            // 태그 추가
+            dto.setTags(
+                    boardTagService.getTagsByBoardId(dto.getId())
+                            .stream()
+                            .map(BoardTagDTO::getName)
+                            .toList()
+            );
+
+            // 좋아요 / 북마크
+            if (loginUid != null) {
                 dto.setLiked(boardLikeService.isLiked(dto.getId(), loginUid));
                 dto.setBookmarked(boardBookmarkService.isBookmarked(dto.getId(), loginUid));
             }
@@ -38,13 +48,26 @@ public class BoardService {
 
     // 좋아요 Top3 게시물 목록
     public List<BoardResponseDTO> getTop3List(String loginUid) {
+
         List<BoardResponseDTO> list = boardMapper.getTop3List();
-        if(loginUid != null) {
-            for(BoardResponseDTO dto : list) {
+
+        for (BoardResponseDTO dto : list) {
+
+            // 태그 조회 후 name만 List<String>으로 매핑
+            List<String> tagNames = boardTagService.getTagsByBoardId(dto.getId())
+                    .stream()
+                    .map(BoardTagDTO::getName)
+                    .toList();
+
+            dto.setTags(tagNames);
+
+            if (loginUid != null) {
+                // 좋아요/북마크 여부 세팅
                 dto.setLiked(boardLikeService.isLiked(dto.getId(), loginUid));
                 dto.setBookmarked(boardBookmarkService.isBookmarked(dto.getId(), loginUid));
             }
         }
+
         return list;
     }
 
@@ -103,11 +126,6 @@ public class BoardService {
         boardMapper.insert(insertDto);
         int boardId = insertDto.getId();
 
-        // 파일 등록
-        if (files != null && !files.isEmpty()) {
-            boardFileService.insert(files, boardId);
-        }
-
         // 사용자 최종 확정한 태그만 저장
         if (dto.getTags() != null && !dto.getTags().isEmpty()) {
             List<Integer> tagIds = new ArrayList<>();
@@ -115,6 +133,11 @@ public class BoardService {
                 tagIds.add(boardTagService.getOrCreateTagId(tagName.trim()));
             }
             boardTagService.saveTagMappings(boardId, tagIds);
+        }
+
+        // 파일 등록 - 제일 마지막에 등록 ( 먼저 등록하면 트랜잭션 실패해도 gcp 에는 올라감 )
+        if (files != null && !files.isEmpty()) {
+            boardFileService.insert(files, boardId);
         }
     }
 

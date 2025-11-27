@@ -6,6 +6,8 @@
 
     <!-- 커서 기반 목록 -->
     <select id="getListByCursor" resultType="com.ggirick.gardening_back.dto.board.BoardResponseDTO">
+        SELECT *
+        FROM (
         SELECT
         b.ID,
         b.TITLE,
@@ -13,20 +15,15 @@
 
         -- 대표 이미지 1장 (thumbnail)
         (
-        SELECT bf.FILE_URL
+        SELECT URL
+        FROM (
+        SELECT bf.URL
         FROM BOARD_FILE bf
         WHERE bf.BOARD_ID = b.ID
         ORDER BY bf.ID
-        FETCH FIRST 1 ROW ONLY
+        )
+        WHERE ROWNUM = 1
         ) AS thumbnail,
-
-        -- 태그 배열(JSON)
-        (
-        SELECT NVL(JSON_ARRAYAGG(t.NAME), '[]')
-        FROM BOARD_TAG_MAPPING m
-        JOIN BOARD_TAG t ON m.TAG_ID = t.ID
-        WHERE m.BOARD_ID = b.ID
-        ) AS tags,
 
         -- 댓글 수
         (SELECT COUNT(*) FROM BOARD_COMMENT c WHERE c.BOARD_ID = b.ID) AS commentCount,
@@ -37,64 +34,65 @@
         b.UPDATED_AT,
         b.IS_NOTIFICATION,
 
-        u.UID AS writerUid,
+        u.UUID AS writerUid,
         u.NICKNAME AS writerNickname,
         u.PROFILE_IMAGE AS writerProfileImage,
         u.BIO AS writerBio
 
         FROM BOARD b
-        JOIN USER_INFO u ON b.WRITER_UID = u.UID
+        JOIN USER_INFO u ON b.WRITER_UID = u.UUID
+
         <where>
             <if test="cursorId != null">
                 AND b.ID &lt; #{cursorId}
             </if>
         </where>
+
         ORDER BY b.ID DESC
-        FETCH FIRST #{limit} ROWS ONLY
+        )
+        WHERE ROWNUM &lt;= #{limit}
     </select>
 
-    <!-- 좋아요 순 TOP3 게시글 -->
+    <!-- Top3 게시글 조회 -->
     <select id="getTop3List" resultType="com.ggirick.gardening_back.dto.board.BoardResponseDTO">
+        SELECT *
+        FROM (
         SELECT
-            b.ID,
-            b.TITLE,
-            b.CONTENTS,
+        b.ID AS ID,
+        b.TITLE,
+        b.CONTENTS,
 
-            -- 썸네일
-            (
-                SELECT bf.FILE_URL
-                FROM BOARD_FILE bf
-                WHERE bf.BOARD_ID = b.ID
-                ORDER BY bf.ID
-                    FETCH FIRST 1 ROW ONLY
-            ) AS thumbnail,
+        -- 썸네일 1장 (Oracle-safe)
+        (
+        SELECT URL
+        FROM (
+        SELECT bf.URL
+        FROM BOARD_FILE bf
+        WHERE bf.BOARD_ID = b.ID
+        ORDER BY bf.ID
+        )
+        WHERE ROWNUM = 1
+        ) AS thumbnail,
 
-            -- 태그 배열(JSON)
-            (
-                SELECT NVL(JSON_ARRAYAGG(t.NAME), '[]')
-                FROM BOARD_TAG_MAPPING m
-                         JOIN BOARD_TAG t ON m.TAG_ID = t.ID
-                WHERE m.BOARD_ID = b.ID
-            ) AS tags,
+        -- 댓글 수
+        (SELECT COUNT(*) FROM BOARD_COMMENT c WHERE c.BOARD_ID = b.ID) AS commentCount,
 
-            -- 댓글 수
-            (SELECT COUNT(*) FROM BOARD_COMMENT c WHERE c.BOARD_ID = b.ID) AS commentCount,
+        b.VIEW_COUNT,
+        b.LIKE_COUNT,
+        b.CREATED_AT,
+        b.UPDATED_AT,
+        b.IS_NOTIFICATION,
 
-            b.VIEW_COUNT AS viewCount,
-            b.LIKE_COUNT AS likeCount,
-            b.CREATED_AT,
-            b.UPDATED_AT,
-            b.IS_NOTIFICATION,
-
-            u.UID AS writerUid,
-            u.NICKNAME AS writerNickname,
-            u.PROFILE_IMAGE AS writerProfileImage,
-            u.BIO AS writerBio
+        u.UUID AS writerUid,
+        u.NICKNAME AS writerNickname,
+        u.PROFILE_URL AS writerProfileImage,
+        u.BIO AS writerBio
 
         FROM BOARD b
-                 JOIN USER_INFO u ON b.WRITER_UID = u.UID
+        JOIN USER_INFO u ON b.WRITER_UID = u.UUID
         ORDER BY b.LIKE_COUNT DESC, b.ID DESC
-            FETCH FIRST 3 ROWS ONLY
+        )
+        WHERE ROWNUM &lt;= 3
     </select>
 
     <!-- 상세 조회 -->
@@ -106,11 +104,14 @@
 
             -- 썸네일 1장
             (
-                SELECT bf.FILE_URL
-                FROM BOARD_FILE bf
-                WHERE bf.BOARD_ID = b.ID
-                ORDER BY bf.ID
-                    FETCH FIRST 1 ROW ONLY
+                SELECT URL
+                FROM (
+                         SELECT bf.URL
+                         FROM BOARD_FILE bf
+                         WHERE bf.BOARD_ID = b.ID
+                         ORDER BY bf.ID
+                     )
+                WHERE ROWNUM = 1
             ) AS thumbnail,
 
             b.VIEW_COUNT AS viewCount,
@@ -119,13 +120,13 @@
             b.UPDATED_AT,
             b.IS_NOTIFICATION,
 
-            u.UID AS writerUid,
+            u.UUID AS writerUid,
             u.NICKNAME AS writerNickname,
             u.PROFILE_IMAGE AS writerProfileImage,
             u.BIO AS writerBio
 
         FROM BOARD b
-                 JOIN USER_INFO u ON b.WRITER_UID = u.UID
+                 JOIN USER_INFO u ON b.WRITER_UID = u.UUID
         WHERE b.ID = #{id}
     </select>
 

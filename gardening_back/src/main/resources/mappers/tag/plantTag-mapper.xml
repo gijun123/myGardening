@@ -18,8 +18,9 @@
     </select>
 
     <!-- LIKE 기반 학명 검색 -->
-    <select id="getTagsByScientificNameLike" resultType="com.ggirick.gardening_back.dto.tag.PlantTagDTO">
-        SELECT
+    <select id="getTagsByScientificNameLike"
+            resultType="com.ggirick.gardening_back.dto.tag.PlantTagDTO">
+        SELECT DISTINCT
             t.TAG_ID,
             t.TAG_NAME,
             t.PARENT_TAG_ID,
@@ -28,6 +29,7 @@
                  JOIN plant_tag_with w ON t.TAG_ID = w.TAG_ID
         WHERE LOWER(w.PLANT_SCIENTIFIC_NAME) LIKE LOWER(#{nameLike})
     </select>
+
 
     <!-- 태그 ID 목록을 기반으로 여러 태그 조회 -->
     <select id="getTagsByIds" resultType="com.ggirick.gardening_back.dto.tag.PlantTagDTO">

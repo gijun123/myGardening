@@ -38,7 +38,7 @@ public class BoardTagService {
 
         String normalized = normalize(tagName);
 
-        BoardTagDTO exist = boardTagMapper.getTagByName(normalized);
+        BoardTagDTO exist = getTagByName(normalized);
         if (exist != null) {
             return exist.getId();
         }

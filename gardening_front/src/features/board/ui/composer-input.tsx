@@ -1,77 +1,85 @@
 import * as React from "react"
-import {useEffect} from "react"
-import {AnimatePresence, motion} from "framer-motion"
-import {CornerDownLeft, Image as ImageIcon, X} from "lucide-react"
-import {Button} from "@/shared/shadcn/components/ui/button"
-import {Textarea} from "@/features/board/ui/textarea"
-import {PlantTagControllerApi} from "@/shared/api";
+import { useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
+import { CornerDownLeft, Image as ImageIcon, X } from "lucide-react"
+import { Button } from "@/shared/shadcn/components/ui/button"
+import { Textarea } from "@/shared/shadcn/components/ui/textarea"
+import { type BoardRequestDTO, PlantTagControllerApi } from "@/shared/api"
 
 // uuid 대체용
 const simpleId = () => Math.random().toString(36).slice(2, 11)
 
 export interface ComposerProps {
-    onSend: (data: { title: string; content: string; tags: string[]; files: File[] }) => void
+    onSend: (data: {
+        boardInfo: BoardRequestDTO
+        files: File[]
+    }) => void | Promise<void>
 }
 
-export function ComposerInput({onSend}: ComposerProps) {
-    const [title, setTitle] = React.useState("") // 제목
-    const [content, setContent] = React.useState("") // 글내용
-    const [tags, setTags] = React.useState<string[]>([]) // 태그
-    const [tagInput, setTagInput] = React.useState("") // 태그 입력 값
-    const [attachments, setAttachments] = React.useState<
+export function ComposerInput({ onSend }: ComposerProps) {
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
+    const [tags, setTags] = useState<string[]>([]);
+    const [tagInput, setTagInput] = useState("");
+    const [attachments, setAttachments] = useState<
         { id: string; file: File; preview?: string }[]
-    >([]) // 첨부 파일
+    >([]);
+    const [tagLoading, setTagLoading] = useState(false); // 태그 불러올 때 로딩
+
 
     const fileInputRef = React.useRef<HTMLInputElement>(null)
 
-    // 파일 업로드 시 자동 태그 추천
+    // 자동 태그 추천
     useEffect(() => {
         if (attachments.length === 0) return;
 
         const fetchTags = async () => {
             try {
-                const plantTag = new PlantTagControllerApi();
+                setTagLoading(true); // 로딩 시작
 
+                const plantTag = new PlantTagControllerApi()
                 const res = await plantTag.recommendTags(
-                    attachments[0].file, "flower");
+                    attachments[0].file,
+                    "flower"
+                )
 
-                setTags(res.data);
+                setTags(res.data)
             } catch (err) {
-                console.error("추천 태그 불러오기 실패:", err);
+                console.error("추천 태그 로딩 실패:", err)
+            } finally {
+                setTagLoading(false); // 로딩 종료
             }
-        };
+        }
 
-        fetchTags();
-    }, [attachments]);
+        fetchTags()
+    }, [attachments])
 
 
-
-    // 이미지 업로드 처리
+    // 이미지 업로드
     const handleFiles = (files: FileList | null) => {
-        if (!files) return;
+        if (!files) return
 
-        const incoming = Array.from(files);
+        const incoming = Array.from(files)
 
-        // 이미지 최대 3장 제한
         if (attachments.length + incoming.length > 3) {
-            alert("이미지는 최대 3장까지 업로드할 수 있습니다.");
-            return;
+            alert("이미지는 최대 3장까지 업로드할 수 있습니다.")
+            return
         }
 
         const list = incoming.map((file) => ({
             id: simpleId(),
             file,
             preview: URL.createObjectURL(file)
-        }));
+        }))
 
-        setAttachments((prev) => [...prev, ...list]);
-    };
-
+        setAttachments((prev) => [...prev, ...list])
+    }
 
     const removeAttachment = (id: string) => {
         setAttachments((prev) => prev.filter((a) => a.id !== id))
     }
 
+    // 태그 추가
     const addTag = () => {
         const t = tagInput.trim()
         if (!t) return
@@ -80,15 +88,45 @@ export function ComposerInput({onSend}: ComposerProps) {
         setTagInput("")
     }
 
-    const removeTag = (t: string) => {
-        setTags((prev) => prev.filter((tag) => tag !== t))
+    const handleEnterTag = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            addTag()
+        }
     }
 
-    const sendHandler = () => {
-        onSend({
+    // 부모로 전달
+    const insertHandler = () => {
+        // 필수값 검증
+        if (!title.trim()) {
+            alert("제목은 필수 입력 항목입니다.")
+            return
+        }
+
+        if (!content.trim()) {
+            alert("내용은 필수 입력 항목입니다.")
+            return
+        }
+
+        // 글자수 제한
+        if (title.length > 200) {
+            alert(`제목은 200자 이내로 입력해야 합니다. (현재 ${title.length}자)`)
+            return
+        }
+
+        if (content.length > 4000) {
+            alert(`내용은 4000자 이내로 입력해야 합니다. (현재 ${content.length}자)`)
+            return
+        }
+
+        const boardInfo: BoardRequestDTO = {
             title,
-            content,
+            contents: content,
             tags,
+            keepFileIds: [],
+        }
+
+        onSend({
+            boardInfo,
             files: attachments.map((a) => a.file)
         })
     }
@@ -96,12 +134,13 @@ export function ComposerInput({onSend}: ComposerProps) {
     return (
         <div className="flex flex-col w-full rounded-xl border bg-card text-card-foreground shadow-sm">
 
-            {/* 제목 + 이미지 버튼 (한 줄) */}
+            {/* 제목 + 이미지 버튼 */}
             <div className="p-3 border-b flex items-center gap-2">
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="제목을 입력하세요"
+                    maxLength={200} // 글자수 제한
                     className="flex-1 p-2 rounded-md border outline-none"
                 />
 
@@ -110,7 +149,7 @@ export function ComposerInput({onSend}: ComposerProps) {
                     size="icon"
                     onClick={() => fileInputRef.current?.click()}
                 >
-                    <ImageIcon className="h-5 w-5"/>
+                    <ImageIcon className="h-5 w-5" />
                 </Button>
 
                 <input
@@ -132,7 +171,8 @@ export function ComposerInput({onSend}: ComposerProps) {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="내용을 입력하세요..."
-                    className="w-full min-h-[140px] border-0 p-2 focus-visible:ring-0"
+                    maxLength={4000} // 글자수 제한
+                    className="min-h-[140px] border-0 p-2 focus-visible:ring-0 bg-background"
                 />
             </div>
 
@@ -145,10 +185,10 @@ export function ComposerInput({onSend}: ComposerProps) {
                                 <motion.div
                                     key={att.id}
                                     layout
-                                    initial={{opacity: 0, scale: 0.8}}
-                                    animate={{opacity: 1, scale: 1}}
-                                    exit={{opacity: 0, scale: 0.8}}
-                                    transition={{type: "spring", stiffness: 260, damping: 22}}
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    transition={{ type: "spring", stiffness: 260, damping: 22 }}
                                     className="relative group"
                                 >
                                     <div className="aspect-square w-full rounded-md overflow-hidden bg-muted">
@@ -162,7 +202,7 @@ export function ComposerInput({onSend}: ComposerProps) {
                                         onClick={() => removeAttachment(att.id)}
                                         className="absolute -top-1 -right-1 bg-background border rounded-full p-0.5 text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                                     >
-                                        <X className="h-3 w-3"/>
+                                        <X className="h-3 w-3" />
                                     </button>
                                 </motion.div>
                             ))}
@@ -177,33 +217,40 @@ export function ComposerInput({onSend}: ComposerProps) {
                     <input
                         value={tagInput}
                         onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={handleEnterTag}
                         placeholder="태그 입력"
                         className="flex-1 p-2 border rounded-md outline-none"
+                        disabled={tagLoading} // 로딩 중일 때 태그 입력 막기
                     />
-                    <Button onClick={addTag}>추가</Button>
+                    <Button onClick={addTag} disabled={tagLoading}>추가</Button>
                 </div>
 
-                {/* 태그 리스트 */}
                 <div className="flex flex-wrap gap-2">
+                    {/* 태그 분석 로딩 */}
+                    {tagLoading && (
+                        <div className="text-sm text-gray-500 animate-pulse">
+                            🌿 태그 분석 중입니다...
+                        </div>
+                    )}
+
                     {tags.map((t) => (
                         <span
                             key={t}
                             className="bg-primary/20 px-3 py-1 rounded-full flex items-center gap-2"
                         >
-              {t}
+                {t}
                             <X
-                                className="h-4 w-4 cursor-pointer"
-                                onClick={() => removeTag(t)}
+                                className="h-3 w-3 cursor-pointer text-destructive"
+                                onClick={() => setTags(tags.filter(tag => tag !== t))}
                             />
             </span>
                     ))}
                 </div>
 
-                {/* 작성 버튼 */}
                 <div className="flex justify-end">
-                    <Button onClick={sendHandler}>
+                    <Button onClick={insertHandler}>
                         작성하기
-                        <CornerDownLeft className="h-4 w-4 ml-2"/>
+                        <CornerDownLeft className="h-4 w-4 ml-2" />
                     </Button>
                 </div>
             </div>

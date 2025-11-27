@@ -464,13 +464,15 @@ PlantService {
                 .url(url)
                 .post(requestBody)
                 .build();
-
+        System.out.println("3");
 
         // 4. OkHttp 요청 실행 및 응답 처리
         try (Response response = httpClient.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                // 응답이 성공적이지 않을 경우 예외 발생
 
+            System.out.println("응답 코드 = " + response.code());
+
+            if (!response.isSuccessful()) {
+                System.out.println("응답 실패 Body = " + response.body().string());
                 return Optional.empty();
             }
 
@@ -484,12 +486,15 @@ PlantService {
 
             // PlantNet API의 응답 구조에 따라 bestMatch가 없거나 null일 수 있습니다.
             if (bestMatchNode.isMissingNode() || bestMatchNode.isNull()) {
+                System.out.println(bestMatchNode);
                 return Optional.empty(); // bestMatch가 없으면 빈 Optional 반환
             }
 
             String bestMatch = bestMatchNode.asText();
+            System.out.println(bestMatch);
 
             if (bestMatch.isEmpty()) {
+                System.out.println("bestMatch 비어있음" + bestMatch);
                 return Optional.empty(); // bestMatch가 비어있으면 빈 Optional 반환
             }
 
@@ -499,7 +504,7 @@ PlantService {
                     .matchedScientificName(bestMatch)
                     .userUid(userUid)
                     .build();
-
+            System.out.println("ScientificName : " + bestMatch );
             plantMapper.insertPlantSearchRequestLog(logDTO);
 
             return Optional.of(bestMatch);
