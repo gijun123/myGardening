@@ -1,7 +1,12 @@
 import {create} from "zustand";
-import {TerrariumImageControllerApi} from "@/shared/api";
+import {
+    TerrariumImageControllerApi,
+    TerrariumLayerControllerApi,
+    type TerrariumLayerDTO
+} from "@/shared/api";
 
 const imageApi = new TerrariumImageControllerApi();
+const layerApi = new TerrariumLayerControllerApi();
 
 export interface TerrariumObject {
     id: string;
@@ -16,6 +21,7 @@ export interface TerrariumObject {
     zIndex?:number;
     sysName?:string;
     oriName?:string;
+    layerType?:string;
 }
 
 interface CanvasStore {
@@ -25,7 +31,7 @@ interface CanvasStore {
     setObjects: (objects: TerrariumObject[]) => void;
     addObject: (obj: TerrariumObject) => void;
     saveCanvas: (terrariumId:number) => Promise<void>;
-    loadCanvas: () => void;
+    loadCanvas: (terrariumId:number) => void;
     moveForward: (id: string) => void;
     moveBackward: (id: string) => void;
     deleteObject: (id: string) => void;
@@ -37,23 +43,61 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     setSelectedId: (id) => set({ selectedId: id }),
     setObjects: (objects) => set({ objects }),
     addObject: (obj) => set({ objects: [...get().objects, obj] }),
-    saveCanvas: async(terrariumId:number)=>{
-        const{objects}=get();
-        const imageObjects = objects.filter(o => o.type === "image");
-        for (const obj of imageObjects) {
-            if (!obj.url || !obj.oriName || !obj.sysName) continue;
+    saveCanvas: async (terrariumId: number) => {
+        const { objects } = get();
 
-            try {
-                await imageApi.uploadImage(terrariumId);
-            } catch (err) {
-                console.error("이미지 저장 실패:", err);
-            }
+        for (const o of objects) {
+            if (o.type !== "image") continue;
+            if (!o.url || !o.sysName) continue;
+
+            // 1) 이미지 기록 저장
+            await imageApi.saveImage({
+                terrariumId,
+                oriName: o.oriName,
+                sysName: o.sysName,
+                url: o.url,
+            });
+
+            // 2) 레이어 편집 상태 저장
+            const layerPayload: TerrariumLayerDTO = {
+                id: Number(o.id),
+                terrariumId,
+                layerType: "image",
+                url: o.url,
+                x: o.x,
+                y: o.y,
+                width: o.width,
+                height: o.height,
+                rotation: o.rotation ?? 0,
+                zindex: o.zIndex ?? 0,
+            };
+
+            await layerApi.saveLayer(layerPayload);
         }
     },
-    loadCanvas: () => {
-        const json = localStorage.getItem("terrarium-canvas");
-        if (!json) return;
-        set({ objects: JSON.parse(json) });
+    loadCanvas: async (terrariumId: number) => {
+        try {
+            const response = await layerApi.getLayers({ params: { terrariumId } });
+            const layers = response.data;
+
+            const objects: TerrariumObject[] = layers.map(layer => ({
+                id: String(layer.id ?? crypto.randomUUID()), // id 없으면 대체값
+                x: layer.x ?? 0,
+                y: layer.y ?? 0,
+                width: layer.width ?? 100,
+                height: layer.height ?? 100,
+                rotation: layer.rotation ?? 0,
+                zIndex: layer.zindex ?? 0,
+                type: "image",
+                url: layer.url ?? undefined,
+                oriName: layer.oriName ?? undefined,
+                sysName: layer.sysName ?? undefined,
+            }));
+
+            set({ objects });
+        } catch (err) {
+            console.error("레이어 로드 실패:", err);
+        }
     },
     moveForward: (id: string) => {
         set((state) => {

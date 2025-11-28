@@ -7,16 +7,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/terrariumImage")
 @RequiredArgsConstructor
 public class TerrariumImageController {
+    private final TerrariumImageService iServ;
 
-    private final TerrariumImageService tiServ;
+    @PostMapping
+    public ResponseEntity<Void> saveImage(@RequestBody TerrariumImageDTO image) {
+        iServ.saveImage(image);
+        return ResponseEntity.ok().build();
+    }
 
-    @PostMapping("/upload")
-    public ResponseEntity<TerrariumImageDTO> uploadImage(@RequestParam int terrariumId,@RequestParam MultipartFile file){
-        TerrariumImageDTO saved = tiServ.saveImage(terrariumId,file);
-        return ResponseEntity.ok(saved);
+    @GetMapping("/{terrariumId}")
+    public ResponseEntity<List<TerrariumImageDTO>> getImages(@PathVariable int terrariumId) {
+        return ResponseEntity.ok(iServ.getImages(terrariumId));
     }
 }

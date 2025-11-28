@@ -6,20 +6,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TerrariumImageService {
+
     private final ImageMapper imageMapper;
 
-    public TerrariumImageDTO saveImage(int terraruiumId, MultipartFile file){
-        String sysName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        String url = "/uploads/" + sysName;
+    public void saveImage(TerrariumImageDTO image) {
+        imageMapper.insertTerrariumImage(image);
+    }
 
-        imageMapper.insertImage(terraruiumId,file.getOriginalFilename(),sysName,url);
-
-        return TerrariumImageDTO.builder().terrariumId(terraruiumId).
-                oriName(file.getOriginalFilename()).sysName(sysName).url(url).build();
+    public List<TerrariumImageDTO> getImages(int terrariumId) {
+        return imageMapper.getImagesByTerrariumId(terrariumId);
     }
 }
